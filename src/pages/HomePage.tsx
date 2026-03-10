@@ -80,7 +80,7 @@ const HomePage = () => (
                 </Button>
               </Link>
               <Link to="/how-it-works">
-                <Button size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+                <Button size="lg" variant="hero-outline">
                   Explore How It Works
                 </Button>
               </Link>
