@@ -11,6 +11,7 @@ import HowItWorksPage from "@/pages/HowItWorksPage";
 import CommunityImpactPage from "@/pages/CommunityImpactPage";
 import ContactPage from "@/pages/ContactPage";
 import AuthPage from "@/pages/AuthPage";
+import EntrepreneurDashboard from "@/pages/EntrepreneurDashboard";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<AuthPage defaultMode="login" />} />
           <Route path="/get-started" element={<AuthPage defaultMode="signup" />} />
+          <Route path="/entrepreneur-dashboard" element={<EntrepreneurDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
