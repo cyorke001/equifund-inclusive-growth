@@ -11,6 +11,8 @@ import HowItWorksPage from "@/pages/HowItWorksPage";
 import CommunityImpactPage from "@/pages/CommunityImpactPage";
 import ContactPage from "@/pages/ContactPage";
 import AuthPage from "@/pages/AuthPage";
+import AuthPage from "@/pages/AuthPage";
+import EntrepreneurDashboard from "@/pages/EntrepreneurDashboard";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();

@@ -13,6 +13,7 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
   const [userType, setUserType] = useState<UserType>("entrepreneur");
   const [showPassword, setShowPassword] = useState(false);
   const [tokenError, setTokenError] = useState("");
+  const navigate = useNavigate();
 
   // Form fields
   const [email, setEmail] = useState("");
@@ -24,19 +25,22 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (mode === "signup" && userType === "institution") {
-      // Validate institution token (demo: accept "EQUI-2026")
       if (!institutionToken || institutionToken.trim().length < 6) {
         setTokenError("A valid institution token is required. Contact EquiFund to request one.");
         return;
       }
-      // In production, validate against backend
       if (institutionToken !== "EQUI-2026") {
         setTokenError("Invalid institution token. Please verify your access code or contact support.");
         return;
       }
     }
     setTokenError("");
-    alert(`${mode === "login" ? "Login" : "Sign up"} as ${userType} — this will connect to the backend in the next iteration.`);
+    // Navigate to appropriate dashboard
+    if (userType === "institution") {
+      navigate("/lender-dashboard");
+    } else {
+      navigate("/entrepreneur-dashboard");
+    }
   };
 
   return (
