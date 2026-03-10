@@ -34,7 +34,6 @@ const App = () => (
           <Route path="/entrepreneur-dashboard" element={<EntrepreneurDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-        </Routes>
         <Footer />
       </BrowserRouter>
     </TooltipProvider>
