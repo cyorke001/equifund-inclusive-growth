@@ -77,7 +77,7 @@ const EntrepreneurDashboard = () => {
                   <option value="Español">Español</option>
                 </select>
               </div>
-              <Button size="sm" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 gap-2">
+              <Button size="sm" variant="hero-outline" className="gap-2">
                 <Download className="h-4 w-4" /> Download Summary
               </Button>
             </div>
