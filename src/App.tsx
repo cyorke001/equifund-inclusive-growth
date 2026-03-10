@@ -33,6 +33,7 @@ const App = () => (
           <Route path="/login" element={<AuthPage defaultMode="login" />} />
           <Route path="/get-started" element={<AuthPage defaultMode="signup" />} />
           <Route path="/entrepreneur-dashboard" element={<EntrepreneurDashboard />} />
+          <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
