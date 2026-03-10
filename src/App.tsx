@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HomePage from "@/pages/HomePage";
@@ -20,24 +21,26 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/how-it-works" element={<HowItWorksPage />} />
-          <Route path="/community-impact" element={<CommunityImpactPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/login" element={<AuthPage defaultMode="login" />} />
-          <Route path="/get-started" element={<AuthPage defaultMode="signup" />} />
-          <Route path="/entrepreneur-dashboard" element={<EntrepreneurDashboard />} />
-          <Route path="/onboarding" element={<OnboardingPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <Footer />
-      </BrowserRouter>
+      <AuthProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/how-it-works" element={<HowItWorksPage />} />
+            <Route path="/community-impact" element={<CommunityImpactPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/login" element={<AuthPage defaultMode="login" />} />
+            <Route path="/get-started" element={<AuthPage defaultMode="signup" />} />
+            <Route path="/entrepreneur-dashboard" element={<EntrepreneurDashboard />} />
+            <Route path="/onboarding" element={<OnboardingPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <Footer />
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
