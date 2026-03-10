@@ -10,18 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
-
-interface StepData {
-  businessName: string;
-  industry: string;
-  location: string;
-  yearsInOperation: string;
-  teamSize: string;
-  currentRevenue: string;
-  fundingNeeded: string;
-  marketDemand: string;
-  businessDescription: string;
-}
+import { useOnboarding, type OnboardingData } from "@/hooks/useOnboarding";
 
 const steps = [
   { id: 0, icon: Building2, title: "Business Name", subtitle: "What's your business called?", tip: "This helps lenders identify your company quickly." },
@@ -52,53 +41,19 @@ const fundingRanges = [
 ];
 
 const celebrations = [
-  "Great start! 🎉",
-  "You're doing amazing! ⭐",
-  "Awesome — keep going! 🚀",
-  "That's really helpful! 💪",
-  "Strong team insight! 👥",
-  "Good to know! 📊",
-  "Smart move! 💡",
-  "Excellent context! 🎯",
-  "Almost there — you're building a strong profile! 🏆",
+  "Great start! 🎉", "You're doing amazing! ⭐", "Awesome — keep going! 🚀",
+  "That's really helpful! 💪", "Strong team insight! 👥", "Good to know! 📊",
+  "Smart move! 💡", "Excellent context! 🎯", "Almost there — you're building a strong profile! 🏆",
 ];
 
 const OnboardingPage = () => {
-  const [currentStep, setCurrentStep] = useState(0);
+  const { currentStep, data, getValue, setFieldValue, setStep, markCompleted, dataKeys } = useOnboarding();
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationText, setCelebrationText] = useState("");
-  const [data, setData] = useState<StepData>({
-    businessName: "",
-    industry: "",
-    location: "",
-    yearsInOperation: "",
-    teamSize: "",
-    currentRevenue: "",
-    fundingNeeded: "",
-    marketDemand: "",
-    businessDescription: "",
-  });
   const navigate = useNavigate();
 
   const progress = Math.round(((currentStep + 1) / steps.length) * 100);
   const step = steps[currentStep];
-
-  const getValue = (): string => {
-    const keys: (keyof StepData)[] = [
-      "businessName", "industry", "location", "yearsInOperation",
-      "teamSize", "currentRevenue", "fundingNeeded", "marketDemand", "businessDescription",
-    ];
-    return data[keys[currentStep]] || "";
-  };
-
-  const setValue = (val: string) => {
-    const keys: (keyof StepData)[] = [
-      "businessName", "industry", "location", "yearsInOperation",
-      "teamSize", "currentRevenue", "fundingNeeded", "marketDemand", "businessDescription",
-    ];
-    setData({ ...data, [keys[currentStep]]: val });
-  };
-
   const canProceed = getValue().trim().length > 0;
 
   const goNext = () => {
@@ -108,199 +63,116 @@ const OnboardingPage = () => {
     setTimeout(() => {
       setShowCelebration(false);
       if (currentStep < steps.length - 1) {
-        setCurrentStep(currentStep + 1);
+        setStep(currentStep + 1);
       } else {
+        markCompleted();
         navigate("/entrepreneur-dashboard");
       }
     }, 1200);
   };
 
   const goBack = () => {
-    if (currentStep > 0) setCurrentStep(currentStep - 1);
+    if (currentStep > 0) setStep(currentStep - 1);
   };
 
   const renderInput = () => {
+    const val = getValue();
+    const setVal = setFieldValue;
+
     switch (currentStep) {
-      case 1: // Industry
+      case 1:
         return (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {industries.map((ind) => (
-              <button
-                key={ind}
-                onClick={() => setValue(ind)}
+              <button key={ind} onClick={() => setVal(ind)}
                 className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all ${
-                  getValue() === ind
-                    ? "border-secondary bg-secondary/10 text-foreground shadow-soft"
-                    : "border-border bg-card text-muted-foreground hover:border-secondary/40"
-                }`}
-              >
-                {ind}
-              </button>
+                  val === ind ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"
+                }`}>{ind}</button>
             ))}
           </div>
         );
-      case 3: // Years
+      case 3:
         return (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {["Less than 1", "1–2 years", "3–5 years", "5+ years"].map((opt) => (
-              <button
-                key={opt}
-                onClick={() => setValue(opt)}
+              <button key={opt} onClick={() => setVal(opt)}
                 className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all ${
-                  getValue() === opt
-                    ? "border-secondary bg-secondary/10 text-foreground shadow-soft"
-                    : "border-border bg-card text-muted-foreground hover:border-secondary/40"
-                }`}
-              >
-                {opt}
-              </button>
+                  val === opt ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"
+                }`}>{opt}</button>
             ))}
           </div>
         );
-      case 4: // Team size
+      case 4:
         return (
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {["Just me", "2–5", "6–20", "20+"].map((opt) => (
-              <button
-                key={opt}
-                onClick={() => setValue(opt)}
+              <button key={opt} onClick={() => setVal(opt)}
                 className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all ${
-                  getValue() === opt
-                    ? "border-secondary bg-secondary/10 text-foreground shadow-soft"
-                    : "border-border bg-card text-muted-foreground hover:border-secondary/40"
-                }`}
-              >
-                {opt}
-              </button>
+                  val === opt ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"
+                }`}>{opt}</button>
             ))}
           </div>
         );
-      case 5: // Revenue
+      case 5:
         return (
           <div className="grid grid-cols-2 gap-2">
             {revenueRanges.map((opt) => (
-              <button
-                key={opt}
-                onClick={() => setValue(opt)}
+              <button key={opt} onClick={() => setVal(opt)}
                 className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all text-left ${
-                  getValue() === opt
-                    ? "border-secondary bg-secondary/10 text-foreground shadow-soft"
-                    : "border-border bg-card text-muted-foreground hover:border-secondary/40"
-                }`}
-              >
-                {opt}
-              </button>
+                  val === opt ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"
+                }`}>{opt}</button>
             ))}
           </div>
         );
-      case 6: // Funding needed
+      case 6:
         return (
           <div className="grid grid-cols-2 gap-2">
             {fundingRanges.map((opt) => (
-              <button
-                key={opt}
-                onClick={() => setValue(opt)}
+              <button key={opt} onClick={() => setVal(opt)}
                 className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all text-left ${
-                  getValue() === opt
-                    ? "border-secondary bg-secondary/10 text-foreground shadow-soft"
-                    : "border-border bg-card text-muted-foreground hover:border-secondary/40"
-                }`}
-              >
-                {opt}
-              </button>
+                  val === opt ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"
+                }`}>{opt}</button>
             ))}
           </div>
         );
-      case 7: // Market demand
-        return (
-          <Textarea
-            value={getValue()}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder="e.g., Growing demand for organic food delivery in urban Toronto neighborhoods..."
-            rows={4}
-            maxLength={500}
-            className="text-base"
-          />
-        );
-      case 8: // Business description
-        return (
-          <Textarea
-            value={getValue()}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder="Tell us what your business does, who it serves, and what makes it unique..."
-            rows={5}
-            maxLength={1000}
-            className="text-base"
-          />
-        );
-      default: // Text inputs (name, location)
-        return (
-          <Input
-            value={getValue()}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder={currentStep === 0 ? "e.g., Maple Leaf Catering" : "e.g., Toronto, Ontario"}
-            maxLength={200}
-            className="text-base h-12"
-            onKeyDown={(e) => e.key === "Enter" && goNext()}
-          />
-        );
+      case 7:
+        return <Textarea value={val} onChange={(e) => setVal(e.target.value)} placeholder="e.g., Growing demand for organic food delivery in urban Toronto neighborhoods..." rows={4} maxLength={500} className="text-base" />;
+      case 8:
+        return <Textarea value={val} onChange={(e) => setVal(e.target.value)} placeholder="Tell us what your business does, who it serves, and what makes it unique..." rows={5} maxLength={1000} className="text-base" />;
+      default:
+        return <Input value={val} onChange={(e) => setVal(e.target.value)} placeholder={currentStep === 0 ? "e.g., Maple Leaf Catering" : "e.g., Toronto, Ontario"} maxLength={200} className="text-base h-12" onKeyDown={(e) => e.key === "Enter" && goNext()} />;
     }
   };
 
   return (
     <main id="main-content" className="min-h-[calc(100vh-4rem)] bg-background flex flex-col">
-      {/* Top progress */}
       <div className="border-b border-border bg-card px-4 py-3">
         <div className="container mx-auto max-w-2xl">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-foreground font-heading">
-              Step {currentStep + 1} of {steps.length}
-            </span>
+            <span className="text-sm font-medium text-foreground font-heading">Step {currentStep + 1} of {steps.length}</span>
             <span className="text-sm font-bold text-secondary">{progress}%</span>
           </div>
           <Progress value={progress} className="h-2" />
         </div>
       </div>
 
-      {/* Step content */}
       <div className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-2xl">
           <AnimatePresence mode="wait">
             {showCelebration ? (
-              <motion.div
-                key="celebration"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="flex flex-col items-center justify-center py-16"
-              >
+              <motion.div key="celebration" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }} className="flex flex-col items-center justify-center py-16">
                 <PartyPopper className="h-12 w-12 text-secondary mb-4" />
                 <p className="text-2xl font-bold font-heading text-foreground">{celebrationText}</p>
               </motion.div>
             ) : (
-              <motion.div
-                key={currentStep}
-                initial={{ opacity: 0, x: 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -40 }}
-                transition={{ duration: 0.3 }}
-              >
-                {/* Step header */}
+              <motion.div key={currentStep} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.3 }}>
                 <div className="mb-8 text-center">
                   <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10">
                     <step.icon className="h-7 w-7 text-secondary" />
                   </div>
-                  <h1 className="text-2xl font-bold font-heading text-foreground md:text-3xl">
-                    {step.subtitle}
-                  </h1>
+                  <h1 className="text-2xl font-bold font-heading text-foreground md:text-3xl">{step.subtitle}</h1>
                 </div>
-
-                {/* Input area */}
-                <div className="mb-6">
-                  {renderInput()}
-                </div>
-
-                {/* Why this matters */}
+                <div className="mb-6">{renderInput()}</div>
                 <div className="mb-8 flex items-start gap-3 rounded-xl bg-muted/50 border border-border p-4">
                   <Lightbulb className="h-5 w-5 shrink-0 text-accent mt-0.5" />
                   <div>
@@ -308,39 +180,17 @@ const OnboardingPage = () => {
                     <p className="text-sm text-muted-foreground">{step.tip}</p>
                   </div>
                 </div>
-
-                {/* Navigation */}
                 <div className="flex items-center justify-between">
-                  <Button
-                    variant="ghost"
-                    onClick={goBack}
-                    disabled={currentStep === 0}
-                    className="gap-2"
-                  >
+                  <Button variant="ghost" onClick={goBack} disabled={currentStep === 0} className="gap-2">
                     <ArrowLeft className="h-4 w-4" /> Back
                   </Button>
-
                   <div className="flex items-center gap-1">
                     {steps.map((_, i) => (
-                      <div
-                        key={i}
-                        className={`h-2 rounded-full transition-all ${
-                          i === currentStep ? "w-6 bg-secondary" : i < currentStep ? "w-2 bg-secondary/40" : "w-2 bg-border"
-                        }`}
-                      />
+                      <div key={i} className={`h-2 rounded-full transition-all ${i === currentStep ? "w-6 bg-secondary" : i < currentStep ? "w-2 bg-secondary/40" : "w-2 bg-border"}`} />
                     ))}
                   </div>
-
-                  <Button
-                    onClick={goNext}
-                    disabled={!canProceed}
-                    className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2"
-                  >
-                    {currentStep === steps.length - 1 ? (
-                      <>Finish <Sparkles className="h-4 w-4" /></>
-                    ) : (
-                      <>Next <ArrowRight className="h-4 w-4" /></>
-                    )}
+                  <Button onClick={goNext} disabled={!canProceed} className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2">
+                    {currentStep === steps.length - 1 ? (<>Finish <Sparkles className="h-4 w-4" /></>) : (<>Next <ArrowRight className="h-4 w-4" /></>)}
                   </Button>
                 </div>
               </motion.div>
@@ -349,23 +199,15 @@ const OnboardingPage = () => {
         </div>
       </div>
 
-      {/* Completed steps summary */}
       {currentStep > 0 && !showCelebration && (
         <div className="border-t border-border bg-card px-4 py-3">
           <div className="container mx-auto max-w-2xl">
             <div className="flex flex-wrap gap-2">
               {steps.slice(0, currentStep).map((s, i) => {
-                const keys: (keyof StepData)[] = [
-                  "businessName", "industry", "location", "yearsInOperation",
-                  "teamSize", "currentRevenue", "fundingNeeded", "marketDemand", "businessDescription",
-                ];
-                const val = data[keys[i]];
+                const val = data[dataKeys[i]];
                 return (
-                  <button
-                    key={i}
-                    onClick={() => setCurrentStep(i)}
-                    className="flex items-center gap-1.5 rounded-full bg-secondary/10 px-3 py-1 text-xs font-medium text-foreground hover:bg-secondary/20 transition-colors"
-                  >
+                  <button key={i} onClick={() => setStep(i)}
+                    className="flex items-center gap-1.5 rounded-full bg-secondary/10 px-3 py-1 text-xs font-medium text-foreground hover:bg-secondary/20 transition-colors">
                     <CheckCircle2 className="h-3 w-3 text-secondary" />
                     <span className="max-w-[120px] truncate">{val}</span>
                   </button>

@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ArrowRight, KeyRound, Building2, User, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
 
 type AuthMode = "login" | "signup";
 type UserType = "entrepreneur" | "institution";
@@ -14,13 +15,20 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [tokenError, setTokenError] = useState("");
   const navigate = useNavigate();
+  const { login, isLoggedIn } = useAuth();
 
-  // Form fields
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [institutionName, setInstitutionName] = useState("");
   const [institutionToken, setInstitutionToken] = useState("");
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/entrepreneur-dashboard", { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +43,14 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
       }
     }
     setTokenError("");
-    // Navigate to appropriate dashboard
+
+    login({
+      email,
+      name: name || email.split("@")[0],
+      userType,
+      ...(userType === "institution" ? { institutionName } : {}),
+    });
+
     if (userType === "institution") {
       navigate("/lender-dashboard");
     } else {
@@ -65,7 +80,6 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
           </p>
         </div>
 
-        {/* Mode toggle */}
         <div className="mb-6 flex rounded-xl border border-border bg-muted p-1">
           <button
             onClick={() => setMode("login")}
@@ -85,7 +99,6 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
           </button>
         </div>
 
-        {/* User type selector (signup only) */}
         {mode === "signup" && (
           <div className="mb-6 grid grid-cols-2 gap-3">
             <button
@@ -169,7 +182,6 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
             </div>
           </div>
 
-          {/* Institution token */}
           {mode === "signup" && userType === "institution" && (
             <div>
               <label htmlFor="token" className="mb-1.5 flex items-center gap-2 text-sm font-medium text-foreground">
