@@ -112,6 +112,7 @@ const InstitutionDashboard = () => {
               <p className="text-[10px] text-sidebar-foreground/50 uppercase tracking-wider">Lender Console</p>
             </div>
           </div>
+          {/* User identity in sidebar footer area is handled below */}
           <button onClick={() => setMobileSidebarOpen(false)} className="lg:hidden text-sidebar-foreground/60 hover:text-sidebar-foreground">
             <X className="h-5 w-5" />
           </button>
