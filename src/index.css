@@ -211,3 +211,121 @@
 .chat-prose h1, .chat-prose h2, .chat-prose h3 { font-weight: 600; margin: 0.5em 0 0.2em; font-size: 0.95em; }
 .chat-prose code { background: hsl(var(--muted)); padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.85em; }
 .chat-prose a { color: hsl(var(--primary)); text-decoration: underline; }
+
+/* ═══════════════════════════════════════════════════════
+   INSTITUTION DASHBOARD — Enterprise Design System
+   Completely separate visual language from entrepreneur side
+   ═══════════════════════════════════════════════════════ */
+
+/* Sidebar */
+.inst-sidebar {
+  background: hsl(220 25% 12%);
+  color: hsl(220 15% 75%);
+}
+.inst-border {
+  border-color: hsl(220 20% 20%);
+}
+.inst-muted {
+  color: hsl(220 15% 55%);
+}
+.inst-text {
+  color: hsl(220 15% 85%);
+}
+.inst-active {
+  background: hsl(220 30% 20%);
+}
+.inst-accent {
+  background: hsl(215 60% 35%);
+}
+
+/* Backgrounds */
+.inst-bg {
+  background: hsl(220 20% 96%);
+}
+.inst-content-bg {
+  background: hsl(220 18% 95%);
+}
+
+/* Header */
+.inst-header {
+  background: hsl(0 0% 100%);
+  border-color: hsl(220 15% 90%);
+}
+
+/* Cards */
+.inst-card {
+  background: hsl(0 0% 100%);
+  border: 1px solid hsl(220 15% 90%);
+  border-radius: 0.5rem;
+}
+
+/* Tables */
+.inst-table-header {
+  background: hsl(220 18% 97%);
+}
+.inst-table-hover {
+  background: hsl(220 20% 97%);
+}
+
+/* Inputs */
+.inst-input {
+  background: hsl(0 0% 100%);
+  border: 1px solid hsl(220 15% 88%);
+  border-radius: 0.375rem;
+  color: hsl(220 25% 15%);
+  font-size: 12px;
+}
+.inst-input:focus {
+  outline: none;
+  border-color: hsl(215 60% 45%);
+  box-shadow: 0 0 0 2px hsl(215 60% 45% / 0.15);
+}
+.inst-input::placeholder {
+  color: hsl(220 15% 60%);
+}
+
+/* Toggle groups */
+.inst-toggle-group {
+  background: hsl(220 18% 95%);
+  border-radius: 0.375rem;
+  padding: 2px;
+  display: flex;
+}
+.inst-toggle-btn {
+  padding: 4px 8px;
+  border-radius: 0.25rem;
+  color: hsl(220 15% 50%);
+  transition: all 0.15s;
+}
+.inst-toggle-active {
+  background: hsl(0 0% 100%);
+  color: hsl(220 25% 15%);
+  box-shadow: 0 1px 2px hsl(0 0% 0% / 0.08);
+}
+
+/* Scrollbar for sidebar */
+.inst-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.inst-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.inst-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(220 20% 25%);
+  border-radius: 2px;
+}
+
+/* Semantic text colors for institution */
+.text-inst-card-text { color: hsl(220 25% 15%); }
+.text-inst-card-muted { color: hsl(220 15% 50%); }
+.text-inst-accent { color: hsl(215 60% 40%); }
+.text-inst-header-text { color: hsl(220 25% 15%); }
+.text-inst-header-muted { color: hsl(220 15% 50%); }
+.border-inst-border { border-color: hsl(220 20% 20%); }
+.border-inst-header-border { border-color: hsl(220 15% 90%); }
+.border-inst-card-border { border-color: hsl(220 15% 92%); }
+.bg-inst-header { background: hsl(0 0% 100%); }
+.bg-inst-header-hover { background: hsl(220 18% 97%); }
+.bg-inst-table-header { background: hsl(220 18% 97%); }
+.bg-inst-table-hover { background: hsl(220 20% 97.5%); }
+.bg-inst-accent { background: hsl(215 60% 35%); }
