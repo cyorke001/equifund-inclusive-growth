@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import {
   ArrowRight, ArrowLeft, Building2, MapPin, Calendar, Users,
   DollarSign, TrendingUp, FileText, Sparkles, CheckCircle2,
-  Lightbulb, PartyPopper, Target, Briefcase,
+  Lightbulb, PartyPopper, Target, Briefcase, Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
-import { useOnboarding, type OnboardingData } from "@/hooks/useOnboarding";
+import { useOnboarding, dataKeys } from "@/hooks/useOnboarding";
+import { useAuth } from "@/contexts/AuthContext";
 
 const steps = [
   { id: 0, icon: Building2, title: "Business Name", subtitle: "What's your business called?", tip: "This helps lenders identify your company quickly." },
@@ -47,10 +48,24 @@ const celebrations = [
 ];
 
 const OnboardingPage = () => {
-  const { currentStep, data, getValue, setFieldValue, setStep, markCompleted, dataKeys } = useOnboarding();
+  const { currentStep, data, getValue, setFieldValue, setStep, markCompleted, loading } = useOnboarding();
+  const { isLoggedIn, isLoading: authLoading } = useAuth();
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationText, setCelebrationText] = useState("");
   const navigate = useNavigate();
+
+  if (authLoading || loading) {
+    return (
+      <main className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </main>
+    );
+  }
+
+  if (!isLoggedIn) {
+    navigate("/login");
+    return null;
+  }
 
   const progress = Math.round(((currentStep + 1) / steps.length) * 100);
   const step = steps[currentStep];
@@ -85,9 +100,7 @@ const OnboardingPage = () => {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {industries.map((ind) => (
               <button key={ind} onClick={() => setVal(ind)}
-                className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all ${
-                  val === ind ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"
-                }`}>{ind}</button>
+                className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all ${val === ind ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"}`}>{ind}</button>
             ))}
           </div>
         );
@@ -96,9 +109,7 @@ const OnboardingPage = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {["Less than 1", "1–2 years", "3–5 years", "5+ years"].map((opt) => (
               <button key={opt} onClick={() => setVal(opt)}
-                className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all ${
-                  val === opt ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"
-                }`}>{opt}</button>
+                className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all ${val === opt ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"}`}>{opt}</button>
             ))}
           </div>
         );
@@ -107,9 +118,7 @@ const OnboardingPage = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {["Just me", "2–5", "6–20", "20+"].map((opt) => (
               <button key={opt} onClick={() => setVal(opt)}
-                className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all ${
-                  val === opt ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"
-                }`}>{opt}</button>
+                className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all ${val === opt ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"}`}>{opt}</button>
             ))}
           </div>
         );
@@ -118,9 +127,7 @@ const OnboardingPage = () => {
           <div className="grid grid-cols-2 gap-2">
             {revenueRanges.map((opt) => (
               <button key={opt} onClick={() => setVal(opt)}
-                className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all text-left ${
-                  val === opt ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"
-                }`}>{opt}</button>
+                className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all text-left ${val === opt ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"}`}>{opt}</button>
             ))}
           </div>
         );
@@ -129,16 +136,14 @@ const OnboardingPage = () => {
           <div className="grid grid-cols-2 gap-2">
             {fundingRanges.map((opt) => (
               <button key={opt} onClick={() => setVal(opt)}
-                className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all text-left ${
-                  val === opt ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"
-                }`}>{opt}</button>
+                className={`rounded-xl border-2 px-4 py-3 text-sm font-medium transition-all text-left ${val === opt ? "border-secondary bg-secondary/10 text-foreground shadow-soft" : "border-border bg-card text-muted-foreground hover:border-secondary/40"}`}>{opt}</button>
             ))}
           </div>
         );
       case 7:
-        return <Textarea value={val} onChange={(e) => setVal(e.target.value)} placeholder="e.g., Growing demand for organic food delivery in urban Toronto neighborhoods..." rows={4} maxLength={500} className="text-base" />;
+        return <Textarea value={val} onChange={(e) => setVal(e.target.value)} placeholder="e.g., Growing demand for organic food delivery..." rows={4} maxLength={500} className="text-base" />;
       case 8:
-        return <Textarea value={val} onChange={(e) => setVal(e.target.value)} placeholder="Tell us what your business does, who it serves, and what makes it unique..." rows={5} maxLength={1000} className="text-base" />;
+        return <Textarea value={val} onChange={(e) => setVal(e.target.value)} placeholder="Tell us what your business does..." rows={5} maxLength={1000} className="text-base" />;
       default:
         return <Input value={val} onChange={(e) => setVal(e.target.value)} placeholder={currentStep === 0 ? "e.g., Maple Leaf Catering" : "e.g., Toronto, Ontario"} maxLength={200} className="text-base h-12" onKeyDown={(e) => e.key === "Enter" && goNext()} />;
     }
