@@ -142,22 +142,29 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
           </button>
         </div>
 
-        {mode === "signup" && (
-          <div className="mb-6 grid grid-cols-2 gap-3">
-            <button onClick={() => { setUserType("entrepreneur"); setTokenError(""); }}
-              className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all ${userType === "entrepreneur" ? "border-secondary bg-secondary/5 shadow-soft" : "border-border bg-card hover:border-muted-foreground/30"}`}
-              aria-pressed={userType === "entrepreneur"}>
-              <User className={`h-6 w-6 ${userType === "entrepreneur" ? "text-secondary" : "text-muted-foreground"}`} />
-              <span className={`text-sm font-medium ${userType === "entrepreneur" ? "text-foreground" : "text-muted-foreground"}`}>{t("auth.entrepreneur")}</span>
-              <span className="text-xs text-muted-foreground">{t("auth.default")}</span>
-            </button>
-            <button onClick={() => setUserType("institution")}
-              className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all ${userType === "institution" ? "border-primary bg-primary/5 shadow-soft" : "border-border bg-card hover:border-muted-foreground/30"}`}
-              aria-pressed={userType === "institution"}>
-              <Building2 className={`h-6 w-6 ${userType === "institution" ? "text-primary" : "text-muted-foreground"}`} />
-              <span className={`text-sm font-medium ${userType === "institution" ? "text-foreground" : "text-muted-foreground"}`}>{t("auth.institution")}</span>
-              <span className="text-xs text-muted-foreground">{t("auth.tokenRequired")}</span>
-            </button>
+        <div className="mb-6 grid grid-cols-2 gap-3">
+          <button onClick={() => { setUserType("entrepreneur"); setTokenError(""); }}
+            className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all ${userType === "entrepreneur" ? "border-secondary bg-secondary/5 shadow-soft" : "border-border bg-card hover:border-muted-foreground/30"}`}
+            aria-pressed={userType === "entrepreneur"}>
+            <User className={`h-6 w-6 ${userType === "entrepreneur" ? "text-secondary" : "text-muted-foreground"}`} />
+            <span className={`text-sm font-medium ${userType === "entrepreneur" ? "text-foreground" : "text-muted-foreground"}`}>{t("auth.entrepreneur")}</span>
+            {mode === "signup" && <span className="text-xs text-muted-foreground">{t("auth.default")}</span>}
+          </button>
+          <button onClick={() => setUserType("institution")}
+            className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all ${userType === "institution" ? "border-primary bg-primary/5 shadow-soft" : "border-border bg-card hover:border-muted-foreground/30"}`}
+            aria-pressed={userType === "institution"}>
+            <Building2 className={`h-6 w-6 ${userType === "institution" ? "text-primary" : "text-muted-foreground"}`} />
+            <span className={`text-sm font-medium ${userType === "institution" ? "text-foreground" : "text-muted-foreground"}`}>{t("auth.institution")}</span>
+            {mode === "signup" && <span className="text-xs text-muted-foreground">{t("auth.tokenRequired")}</span>}
+          </button>
+        </div>
+
+        {mode === "login" && userType === "institution" && (
+          <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-3 flex items-start gap-2">
+            <Building2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+            <p className="text-xs text-muted-foreground">
+              {t("auth.institutionLoginHint") || "Sign in with your institution email and password. If your account was created with a valid institution token, you'll be directed to the Institution Dashboard automatically."}
+            </p>
           </div>
         )}
 
