@@ -83,7 +83,7 @@ const Navbar = () => {
 
           {isLoggedIn ? (
             <>
-              <Link to="/entrepreneur-dashboard">
+              <Link to={profile?.user_type === "institution" ? "/institution-dashboard" : "/entrepreneur-dashboard"}>
                 <Button variant="ghost" size="sm">{t("nav.dashboard")}</Button>
               </Link>
               <Button size="sm" variant="ghost" onClick={handleLogout}>{t("nav.logout")}</Button>
