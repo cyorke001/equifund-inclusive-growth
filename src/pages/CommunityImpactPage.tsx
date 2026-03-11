@@ -12,24 +12,9 @@ const impactStats = [
 ];
 
 const stories = [
-  {
-    name: "Amira K.",
-    location: "Toronto, ON",
-    quote: "I didn't know where to start with funding. EquiFund's guided process helped me understand what lenders actually look for.",
-    type: "Immigrant Entrepreneur",
-  },
-  {
-    name: "David O.",
-    location: "Montreal, QC",
-    quote: "As a Black business owner, I've faced barriers at every turn. This platform made me feel seen and supported.",
-    type: "Black Entrepreneur",
-  },
-  {
-    name: "Community Credit Union",
-    location: "Vancouver, BC",
-    quote: "EquiFund's structured profiles give us a much clearer picture than a credit score alone. It's transformed how we evaluate applications.",
-    type: "Financial Institution",
-  },
+  { name: "Amira K.", location: "Toronto, ON", quote: "I didn't know where to start with funding. EquiFund's guided process helped me understand what lenders actually look for.", type: "Immigrant Entrepreneur" },
+  { name: "David O.", location: "Montreal, QC", quote: "As a Black business owner, I've faced barriers at every turn. This platform made me feel seen and supported.", type: "Black Entrepreneur" },
+  { name: "Community Credit Union", location: "Vancouver, BC", quote: "EquiFund's structured profiles give us a much clearer picture than a credit score alone. It's transformed how we evaluate applications.", type: "Financial Institution" },
 ];
 
 const CommunityImpactPage = () => (
@@ -49,11 +34,7 @@ const CommunityImpactPage = () => (
       <div className="container mx-auto px-4">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>
-            <SectionHeading
-              badge="The Ripple Effect"
-              title="Funding One Business Strengthens an Entire Community"
-              align="left"
-            />
+            <SectionHeading badge="The Ripple Effect" title="Funding One Business Strengthens an Entire Community" align="left" />
             <div className="space-y-4 text-muted-foreground leading-relaxed">
               <p>Every funded minority-owned business creates local jobs, strengthens supply chains, and builds community wealth.</p>
               <p>When barriers to funding are reduced, we don't just help one entrepreneur — we lift families, neighborhoods, and entire economies.</p>
@@ -82,16 +63,10 @@ const CommunityImpactPage = () => (
         <SectionHeading badge="Voices" title="Stories from Our Community" />
         <div className="grid gap-6 md:grid-cols-3">
           {stories.map((story, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="rounded-xl border border-border bg-card p-6 shadow-soft"
-            >
+            <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+              className="rounded-xl border border-border bg-card p-6 shadow-soft">
               <Heart className="mb-3 h-5 w-5 text-secondary" />
-              <p className="text-sm italic text-muted-foreground leading-relaxed">"{story.quote}"</p>
+              <p className="text-sm italic text-foreground/90 leading-relaxed">"{story.quote}"</p>
               <div className="mt-4 border-t border-border pt-3">
                 <p className="font-heading font-semibold text-foreground text-sm">{story.name}</p>
                 <p className="text-xs text-muted-foreground">{story.type} • {story.location}</p>
@@ -102,11 +77,13 @@ const CommunityImpactPage = () => (
       </div>
     </section>
 
+    {/* DARK section - fixed contrast */}
     <section className="bg-primary py-16 md:py-20">
       <div className="container mx-auto px-4 text-center">
         <SectionHeading
           title="Together, We Can Close the Gap"
           description="EquiFund isn't just a platform — it's a movement toward more equitable, transparent, and community-centered financial decision-making."
+          dark
         />
         <div className="mx-auto grid max-w-3xl gap-6 md:grid-cols-3">
           {[
@@ -115,9 +92,8 @@ const CommunityImpactPage = () => (
             { icon: TrendingUp, label: "Higher business survival" },
           ].map((item, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-              className="rounded-xl bg-primary-foreground/5 border border-primary-foreground/10 p-6 text-center"
-            >
-              <item.icon className="mx-auto mb-2 h-6 w-6 text-secondary" />
+              className="rounded-xl bg-primary-foreground/5 border border-primary-foreground/10 p-6 text-center">
+              <item.icon className="mx-auto mb-2 h-6 w-6 text-primary-foreground" />
               <p className="text-sm font-medium text-primary-foreground">{item.label}</p>
             </motion.div>
           ))}

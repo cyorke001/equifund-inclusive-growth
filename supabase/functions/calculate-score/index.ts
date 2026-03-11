@@ -15,7 +15,14 @@ serve(async (req) => {
 
     const filledFields = Object.values(onboardingData).filter((v: unknown) => typeof v === "string" && (v as string).trim().length > 0).length;
     if (filledFields === 0) {
-      return new Response(JSON.stringify({ score: 0, strengths: [], risks: ["No profile data provided yet. Complete onboarding to get your score."] }), {
+      return new Response(JSON.stringify({
+        score: 0,
+        strengths: [],
+        risks: ["No profile data provided yet. Complete onboarding to get your score."],
+        funding_recommendations: [],
+        future_recommendations: [],
+        improvement_steps: [],
+      }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -31,7 +38,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a funding readiness evaluator for small businesses and entrepreneurs. Given business profile data, calculate a funding readiness score from 0-100 and provide strengths and areas to improve.
+            content: `You are a funding readiness evaluator for small businesses and entrepreneurs in Canada. Given business profile data, calculate a funding readiness score from 0-100, provide strengths, areas to improve, and REALISTIC funding recommendations.
 
 Score guidelines:
 - 0-20: Very early stage, minimal information
@@ -39,6 +46,21 @@ Score guidelines:
 - 41-60: Decent foundation, needs more detail
 - 61-80: Strong profile, minor improvements needed  
 - 81-100: Excellent, very fundable
+
+Funding recommendation logic:
+- Low readiness + early stage + little revenue → microloan, incubator support, business readiness grant, community lender
+- Medium readiness + some traction → small business loan, community development financing, grant plus advisory
+- High readiness + strong traction + revenue → bank loan, growth financing, revenue-based financing, angel/impact investor
+- Nonprofit/community model → grant funding, community development fund, mission-aligned lender
+- Innovation-heavy startup → accelerator, innovation grant, early-stage investor
+
+Each recommendation must include:
+- name: funding type name
+- match_pct: match percentage (0-100) based on how well it fits
+- description: why this specific funding fits the entrepreneur's current profile
+- category: "recommended_now" or "possible_later"
+
+Also provide 2-4 concrete improvement steps the entrepreneur can take to unlock better funding options.
 
 You MUST respond using the calculate_score tool.`,
           },
@@ -61,15 +83,35 @@ Business Description: ${onboardingData.business_description || "Not provided"}`,
             type: "function",
             function: {
               name: "calculate_score",
-              description: "Return the funding readiness score with strengths and risks",
+              description: "Return the funding readiness score with strengths, risks, and funding recommendations",
               parameters: {
                 type: "object",
                 properties: {
                   score: { type: "number", description: "Funding readiness score 0-100" },
                   strengths: { type: "array", items: { type: "string" }, description: "2-4 strengths of the business profile" },
                   risks: { type: "array", items: { type: "string" }, description: "2-4 areas that need improvement" },
+                  funding_recommendations: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        name: { type: "string", description: "Funding type name" },
+                        match_pct: { type: "number", description: "Match percentage 0-100" },
+                        description: { type: "string", description: "Plain language explanation of why this fits" },
+                        category: { type: "string", enum: ["recommended_now", "possible_later"], description: "Whether recommended now or possible later" },
+                      },
+                      required: ["name", "match_pct", "description", "category"],
+                      additionalProperties: false,
+                    },
+                    description: "3-6 realistic funding recommendations",
+                  },
+                  improvement_steps: {
+                    type: "array",
+                    items: { type: "string" },
+                    description: "2-4 concrete steps to unlock better funding options",
+                  },
                 },
-                required: ["score", "strengths", "risks"],
+                required: ["score", "strengths", "risks", "funding_recommendations", "improvement_steps"],
                 additionalProperties: false,
               },
             },

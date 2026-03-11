@@ -9,8 +9,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { Lang } from "@/i18n/translations";
 
-const languages = [
+const languages: { code: Lang; label: string }[] = [
   { code: "en", label: "English" },
   { code: "fr", label: "Français" },
   { code: "am", label: "አማርኛ" },
@@ -19,20 +21,20 @@ const languages = [
   { code: "es", label: "Español" },
 ];
 
-const navLinks = [
-  { to: "/", label: "Home" },
-  { to: "/about", label: "About" },
-  { to: "/how-it-works", label: "How It Works" },
-  { to: "/community-impact", label: "Community Impact" },
-  { to: "/contact", label: "Contact Us" },
-];
-
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [language, setLanguage] = useState("en");
   const location = useLocation();
   const navigate = useNavigate();
   const { isLoggedIn, logout } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
+
+  const navLinks = [
+    { to: "/", label: t("nav.home") },
+    { to: "/about", label: t("nav.about") },
+    { to: "/how-it-works", label: t("nav.howItWorks") },
+    { to: "/community-impact", label: t("nav.communityImpact") },
+    { to: "/contact", label: t("nav.contact") },
+  ];
 
   const handleLogout = async () => {
     await logout();
@@ -71,7 +73,10 @@ const Navbar = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {languages.map((lang) => (
-                <DropdownMenuItem key={lang.code} onClick={() => setLanguage(lang.code)}>{lang.label}</DropdownMenuItem>
+                <DropdownMenuItem key={lang.code} onClick={() => setLanguage(lang.code)}
+                  className={language === lang.code ? "bg-muted font-semibold" : ""}>
+                  {lang.label}
+                </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -79,15 +84,15 @@ const Navbar = () => {
           {isLoggedIn ? (
             <>
               <Link to="/entrepreneur-dashboard">
-                <Button variant="ghost" size="sm">Dashboard</Button>
+                <Button variant="ghost" size="sm">{t("nav.dashboard")}</Button>
               </Link>
-              <Button size="sm" variant="ghost" onClick={handleLogout}>Log Out</Button>
+              <Button size="sm" variant="ghost" onClick={handleLogout}>{t("nav.logout")}</Button>
             </>
           ) : (
             <>
-              <Link to="/login"><Button variant="ghost" size="sm">Log In</Button></Link>
+              <Link to="/login"><Button variant="ghost" size="sm">{t("nav.login")}</Button></Link>
               <Link to="/get-started">
-                <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold">Get Started</Button>
+                <Button size="sm" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold">{t("nav.getStarted")}</Button>
               </Link>
             </>
           )}
@@ -109,21 +114,40 @@ const Navbar = () => {
                 }`}>{link.label}</Link>
             ))}
           </div>
-          <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
+          <div className="mt-3 border-t border-border pt-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="w-full justify-start gap-1.5 text-muted-foreground">
+                  <Globe className="h-4 w-4" />
+                  <span>{languages.find((l) => l.code === language)?.label}</span>
+                  <ChevronDown className="h-3 w-3" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {languages.map((lang) => (
+                  <DropdownMenuItem key={lang.code} onClick={() => setLanguage(lang.code)}
+                    className={language === lang.code ? "bg-muted font-semibold" : ""}>
+                    {lang.label}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
             {isLoggedIn ? (
               <>
                 <Link to="/entrepreneur-dashboard" onClick={() => setMobileOpen(false)}>
-                  <Button variant="ghost" size="sm" className="w-full justify-start">Dashboard</Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start">{t("nav.dashboard")}</Button>
                 </Link>
-                <Button variant="ghost" size="sm" className="w-full justify-start" onClick={handleLogout}>Log Out</Button>
+                <Button variant="ghost" size="sm" className="w-full justify-start" onClick={handleLogout}>{t("nav.logout")}</Button>
               </>
             ) : (
               <>
                 <Link to="/login" onClick={() => setMobileOpen(false)}>
-                  <Button variant="ghost" size="sm" className="w-full justify-start">Log In</Button>
+                  <Button variant="ghost" size="sm" className="w-full justify-start">{t("nav.login")}</Button>
                 </Link>
                 <Link to="/get-started" onClick={() => setMobileOpen(false)}>
-                  <Button size="sm" className="w-full bg-secondary text-secondary-foreground font-semibold">Get Started</Button>
+                  <Button size="sm" className="w-full bg-secondary text-secondary-foreground font-semibold">{t("nav.getStarted")}</Button>
                 </Link>
               </>
             )}
