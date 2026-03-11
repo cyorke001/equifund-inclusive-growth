@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, ArrowRight, KeyRound, Building2, User, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, ArrowRight, KeyRound, Building2, User, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 type AuthMode = "login" | "signup";
 type UserType = "entrepreneur" | "institution";
@@ -14,8 +15,10 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
   const [userType, setUserType] = useState<UserType>("entrepreneur");
   const [showPassword, setShowPassword] = useState(false);
   const [tokenError, setTokenError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { login, isLoggedIn } = useAuth();
+  const { signIn, signUp, isLoggedIn, isLoading } = useAuth();
+  const { toast } = useToast();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,48 +26,65 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
   const [institutionName, setInstitutionName] = useState("");
   const [institutionToken, setInstitutionToken] = useState("");
 
-  // Redirect if already logged in
   useEffect(() => {
-    if (isLoggedIn) {
+    if (!isLoading && isLoggedIn) {
       navigate("/entrepreneur-dashboard", { replace: true });
     }
-  }, [isLoggedIn, navigate]);
+  }, [isLoggedIn, isLoading, navigate]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
+
     if (mode === "signup" && userType === "institution") {
       if (!institutionToken || institutionToken.trim().length < 6) {
-        setTokenError("A valid institution token is required. Contact EquiFund to request one.");
+        setTokenError("A valid institution token is required.");
         return;
       }
       if (institutionToken !== "EQUI-2026") {
-        setTokenError("Invalid institution token. Please verify your access code or contact support.");
+        setTokenError("Invalid institution token.");
         return;
       }
     }
     setTokenError("");
+    setSubmitting(true);
 
-    login({
-      email,
-      name: name || email.split("@")[0],
-      userType,
-      ...(userType === "institution" ? { institutionName } : {}),
-    });
-
-    if (userType === "institution") {
-      navigate("/lender-dashboard");
-    } else {
+    try {
+      if (mode === "signup") {
+        const { error } = await signUp(email, password, {
+          name: name || email.split("@")[0],
+          user_type: userType,
+          ...(userType === "institution" ? { institution_name: institutionName } : {}),
+        });
+        if (error) {
+          toast({ title: "Sign up failed", description: error.message, variant: "destructive" });
+          return;
+        }
+        toast({ title: "Account created!", description: "Welcome to EquiFund." });
+      } else {
+        const { error } = await signIn(email, password);
+        if (error) {
+          toast({ title: "Login failed", description: error.message, variant: "destructive" });
+          return;
+        }
+      }
       navigate("/entrepreneur-dashboard");
+    } finally {
+      setSubmitting(false);
     }
   };
 
+  if (isLoading) {
+    return (
+      <main className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </main>
+    );
+  }
+
   return (
     <main id="main-content" className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-background py-12 px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
         <div className="mb-8 text-center">
           <Link to="/" className="inline-flex items-center gap-2 mb-6" aria-label="Back to home">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
@@ -81,54 +101,30 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
         </div>
 
         <div className="mb-6 flex rounded-xl border border-border bg-muted p-1">
-          <button
-            onClick={() => setMode("login")}
-            className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-all ${
-              mode === "login" ? "bg-card text-foreground shadow-soft" : "text-muted-foreground"
-            }`}
-          >
+          <button onClick={() => setMode("login")}
+            className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-all ${mode === "login" ? "bg-card text-foreground shadow-soft" : "text-muted-foreground"}`}>
             Log In
           </button>
-          <button
-            onClick={() => setMode("signup")}
-            className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-all ${
-              mode === "signup" ? "bg-card text-foreground shadow-soft" : "text-muted-foreground"
-            }`}
-          >
+          <button onClick={() => setMode("signup")}
+            className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition-all ${mode === "signup" ? "bg-card text-foreground shadow-soft" : "text-muted-foreground"}`}>
             Sign Up
           </button>
         </div>
 
         {mode === "signup" && (
           <div className="mb-6 grid grid-cols-2 gap-3">
-            <button
-              onClick={() => { setUserType("entrepreneur"); setTokenError(""); }}
-              className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all ${
-                userType === "entrepreneur"
-                  ? "border-secondary bg-secondary/5 shadow-soft"
-                  : "border-border bg-card hover:border-muted-foreground/30"
-              }`}
-              aria-pressed={userType === "entrepreneur"}
-            >
+            <button onClick={() => { setUserType("entrepreneur"); setTokenError(""); }}
+              className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all ${userType === "entrepreneur" ? "border-secondary bg-secondary/5 shadow-soft" : "border-border bg-card hover:border-muted-foreground/30"}`}
+              aria-pressed={userType === "entrepreneur"}>
               <User className={`h-6 w-6 ${userType === "entrepreneur" ? "text-secondary" : "text-muted-foreground"}`} />
-              <span className={`text-sm font-medium ${userType === "entrepreneur" ? "text-foreground" : "text-muted-foreground"}`}>
-                Entrepreneur
-              </span>
+              <span className={`text-sm font-medium ${userType === "entrepreneur" ? "text-foreground" : "text-muted-foreground"}`}>Entrepreneur</span>
               <span className="text-xs text-muted-foreground">Default</span>
             </button>
-            <button
-              onClick={() => setUserType("institution")}
-              className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all ${
-                userType === "institution"
-                  ? "border-primary bg-primary/5 shadow-soft"
-                  : "border-border bg-card hover:border-muted-foreground/30"
-              }`}
-              aria-pressed={userType === "institution"}
-            >
+            <button onClick={() => setUserType("institution")}
+              className={`flex flex-col items-center gap-2 rounded-xl border-2 p-4 transition-all ${userType === "institution" ? "border-primary bg-primary/5 shadow-soft" : "border-border bg-card hover:border-muted-foreground/30"}`}
+              aria-pressed={userType === "institution"}>
               <Building2 className={`h-6 w-6 ${userType === "institution" ? "text-primary" : "text-muted-foreground"}`} />
-              <span className={`text-sm font-medium ${userType === "institution" ? "text-foreground" : "text-muted-foreground"}`}>
-                Financial Institution
-              </span>
+              <span className={`text-sm font-medium ${userType === "institution" ? "text-foreground" : "text-muted-foreground"}`}>Financial Institution</span>
               <span className="text-xs text-muted-foreground">Token required</span>
             </button>
           </div>
@@ -137,9 +133,7 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === "signup" && (
             <div>
-              <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-foreground">
-                {userType === "institution" ? "Your Full Name" : "Full Name"}
-              </label>
+              <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-foreground">Full Name</label>
               <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required maxLength={100} placeholder="Enter your name" />
             </div>
           )}
@@ -152,31 +146,15 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
           )}
 
           <div>
-            <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">
-              {userType === "institution" ? "Official Work Email" : "Email"}
-            </label>
+            <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">Email</label>
             <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required maxLength={255} placeholder="you@example.com" />
           </div>
 
           <div>
             <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-foreground">Password</label>
             <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={8}
-                placeholder="Min. 8 characters"
-                className="pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
+              <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} placeholder="Min. 8 characters" className="pr-10" />
+              <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" aria-label={showPassword ? "Hide password" : "Show password"}>
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
@@ -185,30 +163,22 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
           {mode === "signup" && userType === "institution" && (
             <div>
               <label htmlFor="token" className="mb-1.5 flex items-center gap-2 text-sm font-medium text-foreground">
-                <KeyRound className="h-4 w-4 text-primary" />
-                Institution Access Token
+                <KeyRound className="h-4 w-4 text-primary" /> Institution Access Token
               </label>
-              <Input
-                id="token"
-                value={institutionToken}
-                onChange={(e) => { setInstitutionToken(e.target.value); setTokenError(""); }}
-                required
-                placeholder="Enter your institution token"
-                className={tokenError ? "border-destructive" : ""}
-              />
+              <Input id="token" value={institutionToken} onChange={(e) => { setInstitutionToken(e.target.value); setTokenError(""); }} required placeholder="Enter your institution token" className={tokenError ? "border-destructive" : ""} />
               {tokenError && (
                 <p className="mt-1.5 flex items-start gap-1.5 text-xs text-destructive">
-                  <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                  {tokenError}
+                  <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" /> {tokenError}
                 </p>
               )}
               <p className="mt-1.5 text-xs text-muted-foreground">
-                Don't have a token? <Link to="/contact" className="text-primary hover:underline">Contact us</Link> to request institutional access.
+                Don't have a token? <Link to="/contact" className="text-primary hover:underline">Contact us</Link>
               </p>
             </div>
           )}
 
-          <Button type="submit" className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold gap-2" size="lg">
+          <Button type="submit" disabled={submitting} className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold gap-2" size="lg">
+            {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             {mode === "login" ? "Log In" : "Create Account"} <ArrowRight className="h-4 w-4" />
           </Button>
         </form>

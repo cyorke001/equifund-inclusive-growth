@@ -1,29 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  User, TrendingUp, CheckCircle2, AlertTriangle, Lightbulb, Download,
-  MessageSquare, Globe, BarChart3, Star, ChevronRight, Zap, Target,
-  BookOpen, DollarSign, Building2, ArrowRight, Sparkles, LogOut,
+  TrendingUp, CheckCircle2, AlertTriangle, Lightbulb, Download,
+  MessageSquare, BarChart3, Star, ChevronRight, Zap, Target,
+  DollarSign, Building2, ArrowRight, Sparkles, LogOut, Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/contexts/AuthContext";
-import { getOnboardingProgress, TOTAL_STEPS } from "@/hooks/useOnboarding";
-
-const readinessScore = 62;
-
-const strengths = [
-  "Clear business concept with defined target market",
-  "Located in high-demand service area",
-  "Industry shows consistent growth trends",
-];
-
-const risks = [
-  "Limited financial documentation uploaded",
-  "No revenue history provided yet",
-  "Business plan not yet submitted",
-];
+import { useOnboarding, TOTAL_STEPS } from "@/hooks/useOnboarding";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const fundingTypes = [
   { icon: DollarSign, name: "Microloan", match: "85%", desc: "Small loans under $50K for early-stage businesses" },
@@ -33,15 +21,66 @@ const fundingTypes = [
 ];
 
 const EntrepreneurDashboard = () => {
-  const [language, setLanguage] = useState("English");
-  const { user, logout } = useAuth();
+  const { profile, isLoggedIn, isLoading: authLoading, logout } = useAuth();
   const navigate = useNavigate();
-  const onboarding = getOnboardingProgress();
+  const { toast } = useToast();
+  const onboarding = useOnboarding();
+  const [scoringLoading, setScoringLoading] = useState(false);
+  const [strengths, setStrengths] = useState<string[]>([]);
+  const [risks, setRisks] = useState<string[]>(["Complete your onboarding to get AI-powered insights."]);
+  const [readinessScore, setReadinessScore] = useState(0);
 
-  const handleLogout = () => {
-    logout();
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!authLoading && !isLoggedIn) navigate("/login", { replace: true });
+  }, [authLoading, isLoggedIn, navigate]);
+
+  // Calculate AI score when onboarding data loads
+  const calculateScore = useCallback(async () => {
+    if (onboarding.loading || onboarding.completedFields === 0) {
+      setReadinessScore(0);
+      setStrengths([]);
+      setRisks(["Complete your onboarding to get AI-powered insights."]);
+      return;
+    }
+    setScoringLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("calculate-score", {
+        body: { onboardingData: onboarding.data },
+      });
+      if (error) throw error;
+      if (data?.score !== undefined) {
+        setReadinessScore(data.score);
+        setStrengths(data.strengths || []);
+        setRisks(data.risks || []);
+        // Save score to DB
+        onboarding.saveToDb({ readiness_score: data.score });
+      }
+    } catch (e) {
+      console.error("Score calculation failed:", e);
+      // Fall back to saved score
+      setReadinessScore(onboarding.readinessScore);
+    } finally {
+      setScoringLoading(false);
+    }
+  }, [onboarding.loading, onboarding.completedFields, onboarding.data, onboarding.readinessScore]);
+
+  useEffect(() => {
+    calculateScore();
+  }, [onboarding.loading, onboarding.completedFields]);
+
+  const handleLogout = async () => {
+    await logout();
     navigate("/");
   };
+
+  if (authLoading || onboarding.loading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </main>
+    );
+  }
 
   return (
     <main id="main-content" className="min-h-screen bg-background">
@@ -52,22 +91,10 @@ const EntrepreneurDashboard = () => {
             <div>
               <p className="text-sm text-primary-foreground/60">Welcome back 👋</p>
               <h1 className="text-2xl font-bold font-heading text-primary-foreground">
-                {user?.name ? `Hello, ${user.name}` : "Entrepreneur Dashboard"}
+                {profile?.name ? `Hello, ${profile.name}` : "Entrepreneur Dashboard"}
               </h1>
             </div>
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 rounded-lg bg-primary-foreground/10 px-3 py-1.5">
-                <Globe className="h-4 w-4 text-primary-foreground/70" />
-                <select value={language} onChange={(e) => setLanguage(e.target.value)}
-                  className="bg-transparent text-sm text-primary-foreground border-none outline-none cursor-pointer" aria-label="Language preference">
-                  <option value="English">English</option>
-                  <option value="Français">Français</option>
-                  <option value="አማርኛ">አማርኛ</option>
-                  <option value="Soomaali">Soomaali</option>
-                  <option value="العربية">العربية</option>
-                  <option value="Español">Español</option>
-                </select>
-              </div>
               <Button size="sm" variant="hero-outline" className="gap-2">
                 <Download className="h-4 w-4" /> Download Summary
               </Button>
@@ -80,7 +107,7 @@ const EntrepreneurDashboard = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Onboarding Progress - real data */}
+        {/* Onboarding Progress */}
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="mb-8 rounded-xl border border-border bg-card p-6 shadow-card">
           <div className="flex items-center justify-between mb-3">
@@ -104,10 +131,12 @@ const EntrepreneurDashboard = () => {
         </motion.div>
 
         <div className="grid gap-6 lg:grid-cols-3">
+          {/* AI Readiness Score */}
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="rounded-xl border border-border bg-card p-6 shadow-card lg:col-span-1">
             <h2 className="flex items-center gap-2 font-heading font-semibold text-foreground mb-4">
               <BarChart3 className="h-5 w-5 text-primary" /> AI Funding Readiness
+              {scoringLoading && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
             </h2>
             <div className="flex flex-col items-center py-4">
               <div className="relative flex h-36 w-36 items-center justify-center">
@@ -122,11 +151,12 @@ const EntrepreneurDashboard = () => {
                 </div>
               </div>
               <p className="mt-4 text-sm text-muted-foreground text-center">
-                Your score improves as you complete your profile and add more detail.
+                {readinessScore === 0 ? "Complete onboarding to get your AI score." : "Your score improves as you complete your profile."}
               </p>
             </div>
           </motion.div>
 
+          {/* Strengths & Risks */}
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
             className="rounded-xl border border-border bg-card p-6 shadow-card lg:col-span-2">
             <div className="grid gap-6 md:grid-cols-2">
@@ -135,12 +165,14 @@ const EntrepreneurDashboard = () => {
                   <Star className="h-4 w-4 text-secondary" /> Strengths
                 </h3>
                 <div className="space-y-2">
-                  {strengths.map((s, i) => (
+                  {strengths.length > 0 ? strengths.map((s, i) => (
                     <div key={i} className="flex items-start gap-2 rounded-lg bg-secondary/5 p-3">
                       <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0 text-secondary" />
                       <span className="text-sm text-foreground">{s}</span>
                     </div>
-                  ))}
+                  )) : (
+                    <p className="text-sm text-muted-foreground">Complete onboarding to see your strengths.</p>
+                  )}
                 </div>
               </div>
               <div>
@@ -194,7 +226,7 @@ const EntrepreneurDashboard = () => {
               </div>
               <div>
                 <h3 className="font-heading font-semibold text-primary-foreground">Need help?</h3>
-                <p className="text-sm text-primary-foreground/70">Chat with our AI assistant to understand your scores, get tips, or ask about funding.</p>
+                <p className="text-sm text-primary-foreground/70">Chat with our AI assistant to understand your scores and get tips.</p>
               </div>
             </div>
             <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2 shrink-0">
