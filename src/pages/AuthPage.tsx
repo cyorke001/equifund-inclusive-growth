@@ -63,7 +63,7 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
     e.preventDefault();
     if (submitting) return;
 
-    if (mode === "signup" && userType === "institution") {
+    if (userType === "institution") {
       if (!institutionToken || institutionToken.trim().length < 4) {
         setTokenError(t("auth.tokenNeeded"));
         return;
@@ -159,14 +159,6 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
           </button>
         </div>
 
-        {mode === "login" && userType === "institution" && (
-          <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-3 flex items-start gap-2">
-            <Building2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-            <p className="text-xs text-muted-foreground">
-              {t("auth.institutionLoginHint") || "Sign in with your institution email and password. If your account was created with a valid institution token, you'll be directed to the Institution Dashboard automatically."}
-            </p>
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === "signup" && (
@@ -198,12 +190,12 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
             </div>
           </div>
 
-          {mode === "signup" && userType === "institution" && (
+          {userType === "institution" && (
             <div>
               <label htmlFor="token" className="mb-1.5 flex items-center gap-2 text-sm font-medium text-foreground">
-                <KeyRound className="h-4 w-4 text-primary" /> {t("auth.institutionToken")}
+                <KeyRound className="h-4 w-4 text-primary" /> Institution Access Token
               </label>
-              <Input id="token" value={institutionToken} onChange={(e) => { setInstitutionToken(e.target.value); setTokenError(""); }} required placeholder={t("auth.tokenPlaceholder")} className={tokenError ? "border-destructive" : ""} />
+              <Input id="token" value={institutionToken} onChange={(e) => { setInstitutionToken(e.target.value); setTokenError(""); }} required placeholder="e.g. EQUI-TD-2026" className={tokenError ? "border-destructive" : ""} />
               {tokenError && (
                 <p className="mt-1.5 flex items-start gap-1.5 text-xs text-destructive">
                   <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" /> {tokenError}

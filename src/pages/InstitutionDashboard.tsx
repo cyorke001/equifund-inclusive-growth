@@ -112,6 +112,7 @@ const InstitutionDashboard = () => {
               <p className="text-[10px] text-sidebar-foreground/50 uppercase tracking-wider">Lender Console</p>
             </div>
           </div>
+          {/* User identity in sidebar footer area is handled below */}
           <button onClick={() => setMobileSidebarOpen(false)} className="lg:hidden text-sidebar-foreground/60 hover:text-sidebar-foreground">
             <X className="h-5 w-5" />
           </button>
@@ -139,8 +140,17 @@ const InstitutionDashboard = () => {
           ))}
         </nav>
 
-        {/* Footer */}
-        <div className="border-t border-sidebar-border px-3 py-3">
+        {/* User card + Footer */}
+        <div className="border-t border-sidebar-border px-3 py-3 space-y-2">
+          <div className="flex items-center gap-3 rounded-lg bg-sidebar-accent/30 px-3 py-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold shrink-0">
+              {(profile?.name || "U").charAt(0).toUpperCase()}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[13px] font-semibold text-sidebar-foreground truncate">{profile?.name || "User"}</p>
+              <p className="text-[11px] text-sidebar-foreground/50 truncate">{profile?.institution_name || "Institution"}</p>
+            </div>
+          </div>
           <button onClick={handleLogout} className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium text-sidebar-foreground/65 hover:bg-sidebar-accent/40 hover:text-sidebar-foreground transition-colors">
             <LogOut className="h-4 w-4" /> Log Out
           </button>
@@ -157,7 +167,7 @@ const InstitutionDashboard = () => {
             </button>
             <div>
               <h1 className="text-sm font-bold font-heading text-foreground">{sidebarItems.find(i => i.key === activeTab)?.label || "Dashboard"}</h1>
-              <p className="text-[11px] text-muted-foreground">{profile?.institution_name || "Financial Institution"}</p>
+              <p className="text-[11px] text-muted-foreground">{profile?.name ? `${profile.name} · ` : ""}{profile?.institution_name || "Financial Institution"}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
