@@ -115,7 +115,7 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
           if (currentUser) {
             await supabase
               .from("profiles")
-              .update({ institution_name: institutionName })
+              .update({ institution_name: resolvedInstitutionName })
               .eq("user_id", currentUser.id);
           }
         }
