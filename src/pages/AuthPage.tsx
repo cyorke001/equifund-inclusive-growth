@@ -110,7 +110,7 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
           return;
         }
         // For institution login, update the profile with institution_name from the validated token
-        if (userType === "institution" && institutionName) {
+        if (userType === "institution" && resolvedInstitutionName) {
           const { data: { user: currentUser } } = await supabase.auth.getUser();
           if (currentUser) {
             await supabase
