@@ -63,7 +63,7 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
     e.preventDefault();
     if (submitting) return;
 
-    if (mode === "signup" && userType === "institution") {
+    if (userType === "institution") {
       if (!institutionToken || institutionToken.trim().length < 4) {
         setTokenError(t("auth.tokenNeeded"));
         return;
