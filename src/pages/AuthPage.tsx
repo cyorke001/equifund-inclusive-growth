@@ -105,6 +105,16 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
           toast({ title: t("auth.loginFailed"), description: error.message, variant: "destructive" });
           return;
         }
+        // For institution login, update the profile with institution_name from the validated token
+        if (userType === "institution" && institutionName) {
+          const { data: { user: currentUser } } = await supabase.auth.getUser();
+          if (currentUser) {
+            await supabase
+              .from("profiles")
+              .update({ institution_name: institutionName })
+              .eq("user_id", currentUser.id);
+          }
+        }
         // Navigate immediately based on selected role after login
         if (userType === "institution") {
           navigate("/institution-dashboard", { replace: true });
