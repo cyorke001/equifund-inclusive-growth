@@ -32,10 +32,10 @@ const Navbar = () => {
   const [language, setLanguage] = useState("en");
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, user, logout } = useAuth();
+  const { isLoggedIn, logout } = useAuth();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/");
     setMobileOpen(false);
   };
@@ -110,18 +110,6 @@ const Navbar = () => {
             ))}
           </div>
           <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="justify-start gap-1.5 text-muted-foreground">
-                  <Globe className="h-4 w-4" />{languages.find((l) => l.code === language)?.label}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                {languages.map((lang) => (
-                  <DropdownMenuItem key={lang.code} onClick={() => setLanguage(lang.code)}>{lang.label}</DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
             {isLoggedIn ? (
               <>
                 <Link to="/entrepreneur-dashboard" onClick={() => setMobileOpen(false)}>
