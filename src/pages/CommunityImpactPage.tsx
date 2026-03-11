@@ -66,7 +66,7 @@ const CommunityImpactPage = () => (
             <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
               className="rounded-xl border border-border bg-card p-6 shadow-soft">
               <Heart className="mb-3 h-5 w-5 text-secondary" />
-              <p className="text-sm italic text-foreground leading-relaxed">"{story.quote}"</p>
+              <p className="text-sm italic text-foreground/90 leading-relaxed">"{story.quote}"</p>
               <div className="mt-4 border-t border-border pt-3">
                 <p className="font-heading font-semibold text-foreground text-sm">{story.name}</p>
                 <p className="text-xs text-muted-foreground">{story.type} • {story.location}</p>
