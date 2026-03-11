@@ -58,12 +58,8 @@ const HomePage = () => (
     <section className="relative overflow-hidden bg-hero py-20 md:py-28">
       <div className="container mx-auto px-4">
         <div className="grid items-center gap-12 lg:grid-cols-2">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <span className="mb-4 inline-block rounded-full bg-secondary/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-secondary-foreground">
+          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }}>
+            <span className="mb-4 inline-block rounded-full bg-primary-foreground/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary-foreground">
               Funding Intelligence Platform
             </span>
             <h1 className="text-4xl font-bold leading-tight text-primary-foreground font-heading md:text-5xl lg:text-6xl">
@@ -86,18 +82,8 @@ const HomePage = () => (
               </Link>
             </div>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="relative"
-          >
-            <img
-              src={heroImg}
-              alt="Diverse entrepreneurs collaborating around a table in a modern office"
-              className="rounded-2xl shadow-elevated w-full object-cover max-h-[420px]"
-            />
-            {/* Floating stat card */}
+          <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7, delay: 0.2 }} className="relative">
+            <img src={heroImg} alt="Diverse entrepreneurs collaborating around a table in a modern office" className="rounded-2xl shadow-elevated w-full object-cover max-h-[420px]" />
             <div className="absolute -bottom-4 -left-4 rounded-xl border border-border bg-card p-4 shadow-elevated md:-bottom-6 md:-left-6">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary/10">
@@ -117,11 +103,7 @@ const HomePage = () => (
     {/* Stats */}
     <section className="py-16 md:py-20">
       <div className="container mx-auto px-4">
-        <SectionHeading
-          badge="Canada-Wide Data"
-          title="The Landscape of Minority Entrepreneurship"
-          description="Real, source-backed data showing the state of minority business ownership and financing in Canada."
-        />
+        <SectionHeading badge="Canada-Wide Data" title="The Landscape of Minority Entrepreneurship" description="Real, source-backed data showing the state of minority business ownership and financing in Canada." />
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {stats.map((stat, i) => (
             <StatCard key={i} {...stat} delay={i * 0.1} />
@@ -135,22 +117,11 @@ const HomePage = () => (
       <div className="container mx-auto px-4">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div>
-            <SectionHeading
-              badge="For Entrepreneurs"
-              title="Your Funding Journey, Simplified"
-              description="EquiFund guides you through every step — from understanding your readiness to getting matched with the right opportunities."
-              align="left"
-            />
+            <SectionHeading badge="For Entrepreneurs" title="Your Funding Journey, Simplified" description="EquiFund guides you through every step — from understanding your readiness to getting matched with the right opportunities." align="left" />
             <div className="grid gap-4 sm:grid-cols-2">
               {forEntrepreneurs.map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="rounded-xl border border-border bg-card p-5 shadow-soft"
-                >
+                <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                  className="rounded-xl border border-border bg-card p-5 shadow-soft">
                   <item.icon className="mb-3 h-5 w-5 text-secondary" aria-hidden="true" />
                   <h3 className="font-heading font-semibold text-foreground">{item.title}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">{item.desc}</p>
@@ -158,16 +129,8 @@ const HomePage = () => (
               ))}
             </div>
           </div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-          >
-            <img
-              src={entrepreneurImg}
-              alt="A confident Black woman entrepreneur in her small business"
-              className="rounded-2xl shadow-elevated w-full object-cover max-h-[500px]"
-            />
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}>
+            <img src={entrepreneurImg} alt="A confident Black woman entrepreneur in her small business" className="rounded-2xl shadow-elevated w-full object-cover max-h-[500px]" />
           </motion.div>
         </div>
       </div>
@@ -177,35 +140,15 @@ const HomePage = () => (
     <section className="py-16 md:py-20">
       <div className="container mx-auto px-4">
         <div className="grid items-center gap-12 lg:grid-cols-2">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="order-2 lg:order-1"
-          >
-            <img
-              src={lenderImg}
-              alt="Professional meeting between a lender and entrepreneur"
-              className="rounded-2xl shadow-elevated w-full object-cover max-h-[500px]"
-            />
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} className="order-2 lg:order-1">
+            <img src={lenderImg} alt="Professional meeting between a lender and entrepreneur" className="rounded-2xl shadow-elevated w-full object-cover max-h-[500px]" />
           </motion.div>
           <div className="order-1 lg:order-2">
-            <SectionHeading
-              badge="For Financial Institutions"
-              title="Better Data, Better Decisions"
-              description="EquiFund provides structured profiles, contextual insights, and AI-supported analytics to help your institution make more informed, transparent funding decisions."
-              align="left"
-            />
+            <SectionHeading badge="For Financial Institutions" title="Better Data, Better Decisions" description="EquiFund provides structured profiles, contextual insights, and AI-supported analytics to help your institution make more informed, transparent funding decisions." align="left" />
             <div className="grid gap-4 sm:grid-cols-2">
               {forLenders.map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="rounded-xl border border-border bg-card p-5 shadow-soft"
-                >
+                <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                  className="rounded-xl border border-border bg-card p-5 shadow-soft">
                   <item.icon className="mb-3 h-5 w-5 text-primary" aria-hidden="true" />
                   <h3 className="font-heading font-semibold text-foreground">{item.title}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">{item.desc}</p>
@@ -217,13 +160,14 @@ const HomePage = () => (
       </div>
     </section>
 
-    {/* Why This Matters */}
+    {/* Why This Matters - DARK section */}
     <section className="bg-primary py-16 md:py-20">
       <div className="container mx-auto px-4 text-center">
         <SectionHeading
           badge="Why This Matters"
           title="Inclusive Funding Creates Stronger Economies"
           description="When minority entrepreneurs get fair access to capital, entire communities benefit — more jobs, stronger local economies, and reduced structural gaps."
+          dark
         />
         <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-3">
           {[
@@ -231,41 +175,25 @@ const HomePage = () => (
             { icon: TrendingUp, value: "47%", label: "Higher business survival with proper funding support" },
             { icon: Heart, value: "$4.7B", label: "Potential GDP impact from closing the funding gap" },
           ].map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
-              className="rounded-xl bg-primary-foreground/5 border border-primary-foreground/10 p-6"
-            >
-              <item.icon className="mx-auto mb-3 h-8 w-8 text-secondary" />
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.15 }}
+              className="rounded-xl bg-primary-foreground/5 border border-primary-foreground/10 p-6">
+              <item.icon className="mx-auto mb-3 h-8 w-8 text-primary-foreground" />
               <p className="text-3xl font-bold font-heading text-primary-foreground">{item.value}</p>
-              <p className="mt-2 text-sm text-primary-foreground/70">{item.label}</p>
+              <p className="mt-2 text-sm text-primary-foreground/80">{item.label}</p>
             </motion.div>
           ))}
         </div>
       </div>
     </section>
 
-    {/* What EquiFund Sees That Others Miss */}
+    {/* Beyond Credit Scores */}
     <section className="py-16 md:py-20">
       <div className="container mx-auto px-4">
-        <SectionHeading
-          badge="Beyond Credit Scores"
-          title="What EquiFund Sees That Others Miss"
-          description="Traditional lending looks at credit scores alone. EquiFund analyzes the full picture."
-        />
+        <SectionHeading badge="Beyond Credit Scores" title="What EquiFund Sees That Others Miss" description="Traditional lending looks at credit scores alone. EquiFund analyzes the full picture." />
         <div className="mx-auto flex max-w-4xl flex-wrap justify-center gap-4">
           {beyondCredit.map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="flex items-center gap-3 rounded-full border border-border bg-card px-5 py-3 shadow-soft"
-            >
+            <motion.div key={i} initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
+              className="flex items-center gap-3 rounded-full border border-border bg-card px-5 py-3 shadow-soft">
               <item.icon className="h-5 w-5 text-secondary" aria-hidden="true" />
               <span className="text-sm font-medium text-foreground">{item.label}</span>
             </motion.div>
@@ -277,11 +205,7 @@ const HomePage = () => (
     {/* Built for Real People */}
     <section className="bg-warm py-16 md:py-20">
       <div className="container mx-auto px-4">
-        <SectionHeading
-          badge="Human-Centered Design"
-          title="Built for Real People"
-          description="EquiFund is designed for first-time entrepreneurs, newcomers, and communities that have historically been underserved."
-        />
+        <SectionHeading badge="Human-Centered Design" title="Built for Real People" description="EquiFund is designed for first-time entrepreneurs, newcomers, and communities that have historically been underserved." />
         <div className="mx-auto grid max-w-4xl gap-5 md:grid-cols-2">
           {[
             { icon: BookOpen, title: "Plain-Language Onboarding", desc: "No jargon. Every step is explained clearly." },
@@ -289,14 +213,8 @@ const HomePage = () => (
             { icon: Shield, title: "Lender-Ready Summaries", desc: "Your story translated into the language lenders understand." },
             { icon: Building2, title: "Verified Institution Access", desc: "Only approved financial institutions can access the lender dashboard." },
           ].map((item, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="flex gap-4 rounded-xl border border-border bg-card p-6 shadow-soft"
-            >
+            <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+              className="flex gap-4 rounded-xl border border-border bg-card p-6 shadow-soft">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
                 <item.icon className="h-5 w-5 text-primary" />
               </div>
@@ -313,27 +231,13 @@ const HomePage = () => (
     {/* Financial News */}
     <section className="py-16 md:py-20">
       <div className="container mx-auto px-4">
-        <SectionHeading
-          badge="Stay Informed"
-          title="Financial News & Market Headlines"
-          description="Curated updates on small business financing, lending, grants, and economic policy."
-        />
+        <SectionHeading badge="Stay Informed" title="Financial News & Market Headlines" description="Curated updates on small business financing, lending, grants, and economic policy." />
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {newsItems.map((item, i) => (
-            <motion.article
-              key={i}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="group rounded-xl border border-border bg-card p-5 shadow-soft hover:shadow-card transition-shadow"
-            >
-              <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                {item.category}
-              </span>
-              <h3 className="mt-3 font-heading font-semibold text-foreground leading-snug group-hover:text-primary transition-colors">
-                {item.title}
-              </h3>
+            <motion.article key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+              className="group rounded-xl border border-border bg-card p-5 shadow-soft hover:shadow-card transition-shadow">
+              <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{item.category}</span>
+              <h3 className="mt-3 font-heading font-semibold text-foreground leading-snug group-hover:text-primary transition-colors">{item.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{item.summary}</p>
               <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
                 <span>{item.source}</span>
@@ -356,11 +260,7 @@ const HomePage = () => (
     {/* CTA */}
     <section className="bg-hero py-16 md:py-20">
       <div className="container mx-auto px-4 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
           <h2 className="text-3xl font-bold font-heading text-primary-foreground md:text-4xl">
             Ready to Get Started?
           </h2>
