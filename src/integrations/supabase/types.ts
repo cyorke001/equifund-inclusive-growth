@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      institution_tokens: {
+        Row: {
+          created_at: string
+          id: string
+          institution_name: string
+          is_active: boolean
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          institution_name: string
+          is_active?: boolean
+          token: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          institution_name?: string
+          is_active?: boolean
+          token?: string
+        }
+        Relationships: []
+      }
       onboarding_progress: {
         Row: {
           business_description: string
