@@ -63,6 +63,7 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
     e.preventDefault();
     if (submitting) return;
 
+    let resolvedInstitutionName = institutionName;
     if (userType === "institution") {
       if (!institutionToken || institutionToken.trim().length < 4) {
         setTokenError(t("auth.tokenNeeded"));
@@ -75,7 +76,10 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
         setSubmitting(false);
         return;
       }
-      if (!institutionName && instName) setInstitutionName(instName);
+      if (instName) {
+        resolvedInstitutionName = instName;
+        setInstitutionName(instName);
+      }
     } else {
       setSubmitting(true);
     }
