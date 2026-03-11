@@ -14,7 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      onboarding_progress: {
+        Row: {
+          business_description: string
+          business_name: string
+          completed: boolean
+          created_at: string
+          current_revenue: string
+          current_step: number
+          funding_needed: string
+          id: string
+          industry: string
+          location: string
+          market_demand: string
+          readiness_score: number
+          team_size: string
+          updated_at: string
+          user_id: string
+          years_in_operation: string
+        }
+        Insert: {
+          business_description?: string
+          business_name?: string
+          completed?: boolean
+          created_at?: string
+          current_revenue?: string
+          current_step?: number
+          funding_needed?: string
+          id?: string
+          industry?: string
+          location?: string
+          market_demand?: string
+          readiness_score?: number
+          team_size?: string
+          updated_at?: string
+          user_id: string
+          years_in_operation?: string
+        }
+        Update: {
+          business_description?: string
+          business_name?: string
+          completed?: boolean
+          created_at?: string
+          current_revenue?: string
+          current_step?: number
+          funding_needed?: string
+          id?: string
+          industry?: string
+          location?: string
+          market_demand?: string
+          readiness_score?: number
+          team_size?: string
+          updated_at?: string
+          user_id?: string
+          years_in_operation?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          institution_name: string | null
+          name: string | null
+          updated_at: string
+          user_id: string
+          user_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          institution_name?: string | null
+          name?: string | null
+          updated_at?: string
+          user_id: string
+          user_type?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          institution_name?: string | null
+          name?: string | null
+          updated_at?: string
+          user_id?: string
+          user_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
