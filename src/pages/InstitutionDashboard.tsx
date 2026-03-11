@@ -167,7 +167,7 @@ const InstitutionDashboard = () => {
             </button>
             <div>
               <h1 className="text-sm font-bold font-heading text-foreground">{sidebarItems.find(i => i.key === activeTab)?.label || "Dashboard"}</h1>
-              <p className="text-[11px] text-muted-foreground">{profile?.institution_name || "Financial Institution"}</p>
+              <p className="text-[11px] text-muted-foreground">{profile?.name ? `${profile.name} · ` : ""}{profile?.institution_name || "Financial Institution"}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">

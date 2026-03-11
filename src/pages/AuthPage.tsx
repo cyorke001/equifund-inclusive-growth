@@ -190,12 +190,12 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
             </div>
           </div>
 
-          {mode === "signup" && userType === "institution" && (
+          {userType === "institution" && (
             <div>
               <label htmlFor="token" className="mb-1.5 flex items-center gap-2 text-sm font-medium text-foreground">
-                <KeyRound className="h-4 w-4 text-primary" /> {t("auth.institutionToken")}
+                <KeyRound className="h-4 w-4 text-primary" /> Institution Access Token
               </label>
-              <Input id="token" value={institutionToken} onChange={(e) => { setInstitutionToken(e.target.value); setTokenError(""); }} required placeholder={t("auth.tokenPlaceholder")} className={tokenError ? "border-destructive" : ""} />
+              <Input id="token" value={institutionToken} onChange={(e) => { setInstitutionToken(e.target.value); setTokenError(""); }} required placeholder="e.g. EQUI-TD-2026" className={tokenError ? "border-destructive" : ""} />
               {tokenError && (
                 <p className="mt-1.5 flex items-start gap-1.5 text-xs text-destructive">
                   <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" /> {tokenError}
