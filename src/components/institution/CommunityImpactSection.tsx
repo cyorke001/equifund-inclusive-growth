@@ -9,7 +9,6 @@ const CommunityImpactSection = () => {
   const underservedCount = mockApplicants.filter(a => a.communityImpact >= 80).length;
   const totalFunding = mockApplicants.reduce((s, a) => s + a.fundingNum, 0);
 
-  // Impact by industry
   const industryImpact = Object.entries(
     mockApplicants.reduce((acc, a) => {
       if (!acc[a.industry]) acc[a.industry] = { total: 0, count: 0 };
@@ -20,7 +19,6 @@ const CommunityImpactSection = () => {
   ).map(([name, { total, count }]) => ({ name, impact: Math.round(total / count) }))
     .sort((a, b) => b.impact - a.impact);
 
-  // Geographic reach
   const geoData = Object.entries(
     mockApplicants.reduce((acc, a) => {
       const province = a.location.split(", ")[1] || a.location;
@@ -30,55 +28,52 @@ const CommunityImpactSection = () => {
   ).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-lg font-heading font-bold text-foreground">Community Impact Intelligence</h2>
-      <p className="text-sm text-muted-foreground">Understand how your funding decisions affect communities, jobs, and economic equity.</p>
-
+    <div className="space-y-5">
       {/* Impact KPIs */}
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
         {[
-          { label: "Avg Community Impact", value: `${avgImpact}/100`, icon: Heart, color: "text-equi-green" },
-          { label: "Projected Jobs Supported", value: projectedJobs, icon: Users, color: "text-primary" },
-          { label: "High-Impact Applicants", value: `${underservedCount}/${mockApplicants.length}`, icon: Globe, color: "text-equi-sky" },
-          { label: "Total Capital Deployed", value: `$${(totalFunding / 1000).toFixed(0)}K`, icon: Briefcase, color: "text-secondary" },
+          { label: "Avg Community Impact", value: `${avgImpact}/100`, icon: Heart, accent: "text-teal-600" },
+          { label: "Projected Jobs Supported", value: projectedJobs, icon: Users, accent: "text-inst-accent" },
+          { label: "High-Impact Applicants", value: `${underservedCount}/${mockApplicants.length}`, icon: Globe, accent: "text-blue-600" },
+          { label: "Total Capital Pipeline", value: `$${(totalFunding / 1000).toFixed(0)}K`, icon: Briefcase, accent: "text-emerald-600" },
         ].map((c, i) => (
-          <div key={i} className="rounded-xl border border-border bg-card p-4 shadow-sm">
-            <c.icon className={`h-5 w-5 ${c.color} mb-2`} />
-            <p className="text-xl font-bold font-heading text-foreground">{c.value}</p>
-            <p className="text-[11px] text-muted-foreground">{c.label}</p>
+          <div key={i} className="inst-card p-4">
+            <c.icon className={`h-4 w-4 ${c.accent} mb-2`} />
+            <p className="text-xl font-bold font-heading text-inst-card-text">{c.value}</p>
+            <p className="text-[10px] text-inst-card-muted uppercase tracking-wider">{c.label}</p>
           </div>
         ))}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Impact by Industry */}
-        <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <h3 className="text-sm font-heading font-semibold text-foreground mb-4">Community Impact by Industry</h3>
+        <div className="inst-card p-5">
+          <h3 className="text-[12px] font-heading font-semibold text-inst-card-text mb-4">Impact Score by Industry</h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={industryImpact} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(214 20% 88%)" />
-              <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(215 20% 35%)" }} domain={[0, 100]} />
-              <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: "hsl(215 20% 35%)" }} width={100} />
-              <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
-              <Bar dataKey="impact" fill="hsl(150 45% 40%)" radius={[0, 4, 4, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 15% 92%)" />
+              <XAxis type="number" tick={{ fontSize: 10 }} domain={[0, 100]} />
+              <YAxis type="category" dataKey="name" tick={{ fontSize: 10 }} width={110} />
+              <Tooltip contentStyle={{ fontSize: 11, borderRadius: 6 }} />
+              <Bar dataKey="impact" fill="hsl(170 40% 40%)" radius={[0, 3, 3, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         {/* Geographic Reach */}
-        <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-          <h3 className="text-sm font-heading font-semibold text-foreground mb-4 flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-primary" /> Geographic Reach
+        <div className="inst-card p-5">
+          <h3 className="text-[12px] font-heading font-semibold text-inst-card-text mb-4 flex items-center gap-2">
+            <MapPin className="h-4 w-4 text-inst-accent" /> Geographic Distribution
           </h3>
           <div className="space-y-3">
             {geoData.map((g, i) => (
               <div key={i}>
-                <div className="flex justify-between mb-1">
-                  <span className="text-xs font-medium text-foreground">{g.name}</span>
-                  <span className="text-xs font-bold text-foreground">{g.value} applicant{g.value > 1 ? "s" : ""}</span>
+                <div className="flex justify-between mb-0.5">
+                  <span className="text-[11px] font-medium text-inst-card-text">{g.name}</span>
+                  <span className="text-[11px] font-bold text-inst-card-text">{g.value} applicant{g.value > 1 ? "s" : ""}</span>
                 </div>
-                <div className="h-2 rounded-full bg-muted overflow-hidden">
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${(g.value / mockApplicants.length) * 100}%` }} />
+                <div className="h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                  <div className="h-full rounded-full bg-inst-accent" style={{ width: `${(g.value / mockApplicants.length) * 100}%` }} />
                 </div>
               </div>
             ))}
@@ -86,15 +81,15 @@ const CommunityImpactSection = () => {
         </div>
       </div>
 
-      {/* Equity statement */}
-      <div className="rounded-xl border border-secondary/30 bg-secondary/5 p-5">
-        <h3 className="text-sm font-heading font-semibold text-foreground mb-2 flex items-center gap-2">
-          <TrendingUp className="h-4 w-4 text-secondary" /> Mission Alignment Summary
+      {/* Mission alignment */}
+      <div className="rounded-lg border border-teal-200 bg-teal-50 p-5">
+        <h3 className="text-[12px] font-heading font-semibold text-teal-800 mb-2 flex items-center gap-2">
+          <TrendingUp className="h-4 w-4" /> Mission Alignment Assessment
         </h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          Your current portfolio pipeline shows strong alignment with equity-focused lending goals. {underservedCount} of {mockApplicants.length} applicants
-          serve underserved communities with impact scores above 80. Approving high-impact applicants would support an estimated {projectedJobs} jobs
-          and direct ${(totalFunding / 1000).toFixed(0)}K in capital to minority-owned businesses.
+        <p className="text-[11px] text-teal-700 leading-relaxed">
+          Current pipeline shows strong alignment with equity-focused lending objectives. {underservedCount} of {mockApplicants.length} applicants
+          serve underserved communities with impact scores above 80. Portfolio deployment would support an estimated {projectedJobs} jobs
+          and direct ${(totalFunding / 1000).toFixed(0)}K in capital to minority-owned businesses across {geoData.length} provinces.
         </p>
       </div>
     </div>

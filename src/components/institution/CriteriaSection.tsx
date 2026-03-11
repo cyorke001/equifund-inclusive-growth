@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Settings, Save, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { defaultCriteria, InstitutionCriteria, industries } from "./mockData";
 
 const allStages = ["Idea", "Early", "Growth", "Established"];
@@ -14,124 +13,120 @@ const CriteriaSection = () => {
   const toggleArray = (arr: string[], item: string) =>
     arr.includes(item) ? arr.filter(x => x !== item) : [...arr, item];
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+  const handleSave = () => { setSaved(true); setTimeout(() => setSaved(false), 2000); };
+
+  const ChipGroup = ({ items, selected, onToggle, accent }: { items: string[]; selected: string[]; onToggle: (i: string) => void; accent: string }) => (
+    <div className="flex flex-wrap gap-2 mt-2">
+      {items.map(item => (
+        <button
+          key={item}
+          onClick={() => onToggle(item)}
+          className={`rounded-md border px-3 py-1.5 text-[11px] font-medium transition-all ${
+            selected.includes(item)
+              ? `${accent} border-current bg-current/10`
+              : "border-inst-card-border text-inst-card-muted hover:border-inst-accent/50"
+          }`}
+        >{item}</button>
+      ))}
+    </div>
+  );
 
   return (
-    <div className="space-y-6 max-w-3xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-heading font-bold text-foreground flex items-center gap-2">
-            <Settings className="h-5 w-5 text-primary" /> Institution Lending Criteria
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1">Configure your internal criteria. The dashboard will use these settings to rank applicants, generate lender-fit scores, and tailor recommendations.</p>
-        </div>
+    <div className="space-y-5 max-w-3xl">
+      <div>
+        <h2 className="text-[14px] font-heading font-bold text-inst-card-text flex items-center gap-2">
+          <Settings className="h-5 w-5 text-inst-accent" /> Lending Criteria Configuration
+        </h2>
+        <p className="text-[11px] text-inst-card-muted mt-1">
+          These parameters drive applicant ranking, lender-fit scores, and recommendation logic across the platform.
+        </p>
       </div>
 
-      {/* Preferred Industries */}
-      <fieldset className="rounded-xl border border-border bg-card p-5 shadow-sm">
-        <legend className="text-sm font-heading font-semibold text-foreground px-2">Preferred Industries</legend>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {industries.map(ind => (
-            <button
-              key={ind}
-              onClick={() => setCriteria(c => ({ ...c, preferredIndustries: toggleArray(c.preferredIndustries, ind) }))}
-              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                criteria.preferredIndustries.includes(ind) ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/50"
-              }`}
-            >{ind}</button>
-          ))}
-        </div>
-      </fieldset>
+      <div className="inst-card p-5">
+        <h3 className="text-[11px] font-bold text-inst-card-muted uppercase tracking-wider mb-3">Preferred Industries</h3>
+        <ChipGroup
+          items={industries}
+          selected={criteria.preferredIndustries}
+          onToggle={ind => setCriteria(c => ({ ...c, preferredIndustries: toggleArray(c.preferredIndustries, ind) }))}
+          accent="text-inst-accent"
+        />
+      </div>
 
-      {/* Target Geography */}
-      <fieldset className="rounded-xl border border-border bg-card p-5 shadow-sm">
-        <legend className="text-sm font-heading font-semibold text-foreground px-2">Target Geography</legend>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {allProvinces.map(prov => (
-            <button
-              key={prov}
-              onClick={() => setCriteria(c => ({ ...c, targetGeography: toggleArray(c.targetGeography, prov) }))}
-              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                criteria.targetGeography.includes(prov) ? "border-secondary bg-secondary/10 text-secondary" : "border-border text-muted-foreground hover:border-secondary/50"
-              }`}
-            >{prov}</button>
-          ))}
-        </div>
-      </fieldset>
+      <div className="inst-card p-5">
+        <h3 className="text-[11px] font-bold text-inst-card-muted uppercase tracking-wider mb-3">Target Geography</h3>
+        <ChipGroup
+          items={allProvinces}
+          selected={criteria.targetGeography}
+          onToggle={prov => setCriteria(c => ({ ...c, targetGeography: toggleArray(c.targetGeography, prov) }))}
+          accent="text-emerald-600"
+        />
+      </div>
 
-      {/* Business Stage */}
-      <fieldset className="rounded-xl border border-border bg-card p-5 shadow-sm">
-        <legend className="text-sm font-heading font-semibold text-foreground px-2">Business Stage Preference</legend>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {allStages.map(stage => (
-            <button
-              key={stage}
-              onClick={() => setCriteria(c => ({ ...c, stagePreference: toggleArray(c.stagePreference, stage) }))}
-              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                criteria.stagePreference.includes(stage) ? "border-equi-sky bg-equi-sky/10 text-equi-sky" : "border-border text-muted-foreground hover:border-equi-sky/50"
-              }`}
-            >{stage}</button>
-          ))}
-        </div>
-      </fieldset>
+      <div className="inst-card p-5">
+        <h3 className="text-[11px] font-bold text-inst-card-muted uppercase tracking-wider mb-3">Business Stage Preference</h3>
+        <ChipGroup
+          items={allStages}
+          selected={criteria.stagePreference}
+          onToggle={stage => setCriteria(c => ({ ...c, stagePreference: toggleArray(c.stagePreference, stage) }))}
+          accent="text-blue-600"
+        />
+      </div>
 
-      {/* Financial Thresholds */}
-      <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-        <h3 className="text-sm font-heading font-semibold text-foreground mb-4">Financial Thresholds</h3>
+      <div className="inst-card p-5">
+        <h3 className="text-[11px] font-bold text-inst-card-muted uppercase tracking-wider mb-3">Financial Thresholds</h3>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="text-xs font-medium text-muted-foreground">Minimum Funding ($)</label>
-            <Input type="number" value={criteria.fundingMin} onChange={e => setCriteria(c => ({ ...c, fundingMin: +e.target.value }))} className="mt-1 h-9 text-sm" />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-muted-foreground">Maximum Funding ($)</label>
-            <Input type="number" value={criteria.fundingMax} onChange={e => setCriteria(c => ({ ...c, fundingMax: +e.target.value }))} className="mt-1 h-9 text-sm" />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-muted-foreground">Minimum Revenue ($)</label>
-            <Input type="number" value={criteria.revenueMin} onChange={e => setCriteria(c => ({ ...c, revenueMin: +e.target.value }))} className="mt-1 h-9 text-sm" />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-muted-foreground">Risk Tolerance (1=Low only, 3=All)</label>
-            <Input type="number" min={1} max={3} value={criteria.riskRange[1]} onChange={e => setCriteria(c => ({ ...c, riskRange: [1, Math.min(3, Math.max(1, +e.target.value))] }))} className="mt-1 h-9 text-sm" />
-          </div>
+          {[
+            { label: "Minimum Funding ($)", value: criteria.fundingMin, key: "fundingMin" },
+            { label: "Maximum Funding ($)", value: criteria.fundingMax, key: "fundingMax" },
+            { label: "Minimum Revenue ($)", value: criteria.revenueMin, key: "revenueMin" },
+            { label: "Risk Tolerance (1=Low only, 3=All)", value: criteria.riskRange[1], key: "riskMax" },
+          ].map(field => (
+            <div key={field.key}>
+              <label className="text-[10px] font-medium text-inst-card-muted uppercase tracking-wider">{field.label}</label>
+              <input
+                type="number"
+                value={field.value}
+                onChange={e => {
+                  const val = +e.target.value;
+                  if (field.key === "riskMax") setCriteria(c => ({ ...c, riskRange: [1, Math.min(3, Math.max(1, val))] }));
+                  else setCriteria(c => ({ ...c, [field.key]: val }));
+                }}
+                className="inst-input mt-1 h-9 w-full px-3"
+              />
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Priorities */}
-      <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
-        <h3 className="text-sm font-heading font-semibold text-foreground mb-4">Strategic Priorities</h3>
+      <div className="inst-card p-5">
+        <h3 className="text-[11px] font-bold text-inst-card-muted uppercase tracking-wider mb-3">Strategic Priorities</h3>
         <div className="space-y-3">
           {[
-            { key: "impactPriority" as const, label: "Prioritize Community Impact", desc: "Boost ranking for applicants with high community impact scores." },
-            { key: "equityFocus" as const, label: "Equity-Focused Lending", desc: "Prioritize applicants from underserved and minority communities." },
+            { key: "impactPriority" as const, label: "Prioritize Community Impact", desc: "Boost ranking for applicants serving underserved communities." },
+            { key: "equityFocus" as const, label: "Equity-Focused Lending", desc: "Prioritize applicants from minority and underrepresented groups." },
           ].map(item => (
-            <label key={item.key} className="flex items-start gap-3 cursor-pointer">
+            <label key={item.key} className="flex items-start gap-3 cursor-pointer rounded-md border border-inst-card-border p-3 hover:bg-inst-table-hover transition-colors">
               <input
                 type="checkbox"
                 checked={criteria[item.key]}
                 onChange={e => setCriteria(c => ({ ...c, [item.key]: e.target.checked }))}
-                className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-ring"
+                className="mt-0.5 h-4 w-4 rounded border-gray-300"
               />
               <div>
-                <p className="text-sm font-medium text-foreground">{item.label}</p>
-                <p className="text-xs text-muted-foreground">{item.desc}</p>
+                <p className="text-[12px] font-medium text-inst-card-text">{item.label}</p>
+                <p className="text-[10px] text-inst-card-muted">{item.desc}</p>
               </div>
             </label>
           ))}
         </div>
       </div>
 
-      {/* Actions */}
       <div className="flex items-center gap-3">
-        <Button onClick={handleSave} className="gap-2">
+        <Button onClick={handleSave} className="gap-2 bg-inst-accent hover:opacity-90 text-white text-[12px]">
           <Save className="h-4 w-4" /> {saved ? "Saved ✓" : "Save Criteria"}
         </Button>
-        <Button variant="outline" onClick={() => setCriteria({ ...defaultCriteria })} className="gap-2">
-          <RotateCcw className="h-4 w-4" /> Reset to Defaults
+        <Button variant="outline" onClick={() => setCriteria({ ...defaultCriteria })} className="gap-2 text-[12px] border-inst-card-border text-inst-card-muted">
+          <RotateCcw className="h-4 w-4" /> Reset Defaults
         </Button>
       </div>
     </div>

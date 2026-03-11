@@ -1,6 +1,5 @@
-import { Target, Lightbulb, TrendingUp, Star, Search } from "lucide-react";
+import { Target, Star, Search, Eye } from "lucide-react";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
 import { mockApplicants, Applicant } from "./mockData";
 
 interface Props {
@@ -18,76 +17,94 @@ const OpportunityScoringSection = ({ onSelectApplicant }: Props) => {
   const hiddenGems = mockApplicants.filter(a => a.opportunityScore >= 65 && a.score < 60);
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-lg font-heading font-bold text-foreground">Opportunity Scoring</h2>
-
+    <div className="space-y-5">
       {/* Hidden Gems */}
       {hiddenGems.length > 0 && (
-        <div className="rounded-xl border border-equi-gold/30 bg-accent/5 p-5">
-          <h3 className="text-sm font-heading font-semibold text-foreground mb-3 flex items-center gap-2">
-            <Star className="h-4 w-4 text-accent" /> Hidden Gems — High Opportunity, Lower Readiness
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <h3 className="text-[12px] font-heading font-semibold text-amber-800 mb-2 flex items-center gap-2">
+            <Star className="h-4 w-4" /> Hidden Gems — High Opportunity, Lower Readiness
           </h3>
-          <p className="text-xs text-muted-foreground mb-3">These applicants show strong growth signals but may be overlooked by traditional screening. They could benefit from targeted support to become loan-ready.</p>
+          <p className="text-[10px] text-amber-700 mb-3">These applicants show strong growth signals but may be overlooked by traditional screening criteria.</p>
           <div className="grid gap-2 sm:grid-cols-2">
             {hiddenGems.map(app => (
-              <button key={app.id} onClick={() => onSelectApplicant(app)} className="text-left rounded-lg border border-border bg-card p-3 hover:shadow-md transition-shadow">
+              <button key={app.id} onClick={() => onSelectApplicant(app)} className="text-left inst-card p-3 hover:shadow-md transition-shadow">
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-xs font-semibold text-foreground">{app.name}</p>
-                  <span className="flex items-center gap-1 text-[10px] font-bold text-accent"><Target className="h-3 w-3" />{app.opportunityScore}</span>
+                  <p className="text-[11px] font-semibold text-inst-card-text">{app.name}</p>
+                  <span className="text-[10px] font-bold text-amber-700 flex items-center gap-0.5"><Target className="h-3 w-3" /> {app.opportunityScore}</span>
                 </div>
-                <p className="text-[10px] text-muted-foreground">{app.description.slice(0, 80)}...</p>
+                <p className="text-[10px] text-inst-card-muted line-clamp-2">{app.description}</p>
               </button>
             ))}
           </div>
         </div>
       )}
 
-      {/* Controls */}
+      {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search businesses..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 text-xs" />
+        <div className="relative flex-1 max-w-xs">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-inst-card-muted" />
+          <input placeholder="Search businesses..." value={search} onChange={e => setSearch(e.target.value)} className="inst-input h-8 w-full pl-8 pr-3 text-[11px]" />
         </div>
-        <div className="flex items-center gap-1 bg-muted rounded-lg p-0.5">
+        <div className="inst-toggle-group ml-auto">
           {([["opportunityScore", "Opportunity"], ["communityImpact", "Impact"], ["lenderFit", "Lender Fit"]] as const).map(([key, label]) => (
-            <button key={key} onClick={() => setSortBy(key)} className={`px-3 py-1.5 rounded-md text-[11px] font-medium transition-colors ${sortBy === key ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"}`}>
+            <button key={key} onClick={() => setSortBy(key)} className={`inst-toggle-btn text-[10px] ${sortBy === key ? "inst-toggle-active" : ""}`}>
               {label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Ranking */}
-      <div className="space-y-2">
-        {sorted.map((app, rank) => (
-          <button key={app.id} onClick={() => onSelectApplicant(app)} className="w-full text-left flex items-center gap-4 rounded-xl border border-border bg-card p-4 hover:shadow-md transition-shadow">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-              {rank + 1}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold text-foreground">{app.name}</p>
-                {app.flags.length > 0 && <span className="text-[9px] text-destructive font-medium">⚠ {app.flags.length} flags</span>}
-              </div>
-              <p className="text-[11px] text-muted-foreground mt-0.5">{app.industry} · {app.location} · {app.stage} stage</p>
-              <p className="text-[11px] text-muted-foreground mt-1 line-clamp-1">{app.description}</p>
-            </div>
-            <div className="flex items-center gap-4 shrink-0">
-              <div className="text-center">
-                <p className={`text-lg font-bold font-heading ${app.opportunityScore >= 75 ? "text-equi-sky" : app.opportunityScore >= 55 ? "text-accent" : "text-muted-foreground"}`}>{app.opportunityScore}</p>
-                <p className="text-[9px] text-muted-foreground">Opportunity</p>
-              </div>
-              <div className="text-center">
-                <p className="text-lg font-bold font-heading text-equi-green">{app.communityImpact}</p>
-                <p className="text-[9px] text-muted-foreground">Impact</p>
-              </div>
-              <div className="text-center">
-                <p className={`text-lg font-bold font-heading ${app.lenderFit >= 70 ? "text-secondary" : "text-accent"}`}>{app.lenderFit}%</p>
-                <p className="text-[9px] text-muted-foreground">Fit</p>
-              </div>
-            </div>
-          </button>
-        ))}
+      {/* Ranking table */}
+      <div className="inst-card overflow-hidden">
+        <table className="w-full text-[11px]">
+          <thead>
+            <tr className="bg-inst-table-header border-b border-inst-card-border">
+              <th className="px-3 py-2.5 text-center font-semibold text-inst-card-muted w-12">#</th>
+              <th className="px-3 py-2.5 text-left font-semibold text-inst-card-muted uppercase tracking-wider">Business</th>
+              <th className="px-3 py-2.5 text-center font-semibold text-inst-card-muted uppercase tracking-wider">Opportunity</th>
+              <th className="px-3 py-2.5 text-center font-semibold text-inst-card-muted uppercase tracking-wider">Impact</th>
+              <th className="px-3 py-2.5 text-center font-semibold text-inst-card-muted uppercase tracking-wider">Lender Fit</th>
+              <th className="px-3 py-2.5 text-center font-semibold text-inst-card-muted uppercase tracking-wider">Readiness</th>
+              <th className="px-3 py-2.5 text-center font-semibold text-inst-card-muted uppercase tracking-wider">Risk</th>
+              <th className="px-3 py-2.5 text-center font-semibold text-inst-card-muted uppercase tracking-wider">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((app, rank) => (
+              <tr key={app.id} className="border-b border-inst-card-border last:border-0 hover:bg-inst-table-hover transition-colors">
+                <td className="px-3 py-2.5 text-center">
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-inst-table-header text-[10px] font-bold text-inst-card-text">{rank + 1}</span>
+                </td>
+                <td className="px-3 py-2.5">
+                  <p className="font-semibold text-inst-card-text">{app.name}</p>
+                  <p className="text-[10px] text-inst-card-muted">{app.industry} · {app.location}</p>
+                </td>
+                <td className="px-3 py-2.5 text-center">
+                  <span className={`text-[13px] font-bold ${app.opportunityScore >= 75 ? "text-blue-600" : "text-inst-card-text"}`}>{app.opportunityScore}</span>
+                </td>
+                <td className="px-3 py-2.5 text-center">
+                  <span className="text-[13px] font-bold text-teal-600">{app.communityImpact}</span>
+                </td>
+                <td className="px-3 py-2.5 text-center font-bold text-inst-card-text">{app.lenderFit}%</td>
+                <td className="px-3 py-2.5 text-center">
+                  <span className={`font-bold ${app.score >= 70 ? "text-emerald-600" : app.score >= 50 ? "text-amber-600" : "text-red-600"}`}>{app.score}</span>
+                </td>
+                <td className="px-3 py-2.5 text-center">
+                  <span className={`inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-semibold ${
+                    app.risk === "high" ? "bg-red-100 text-red-700" : app.risk === "medium" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"
+                  }`}>
+                    {app.risk === "high" ? "▲" : app.risk === "medium" ? "◆" : "●"} {app.risk}
+                  </span>
+                </td>
+                <td className="px-3 py-2.5 text-center">
+                  <button onClick={() => onSelectApplicant(app)} className="inline-flex items-center gap-1 rounded-md border border-inst-card-border px-2 py-1 text-[10px] font-medium text-inst-accent hover:bg-inst-table-hover transition-colors">
+                    <Eye className="h-3 w-3" /> Review
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
