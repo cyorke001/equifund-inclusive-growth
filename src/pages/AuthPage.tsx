@@ -63,6 +63,7 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
     e.preventDefault();
     if (submitting) return;
 
+    let resolvedInstitutionName = institutionName;
     if (userType === "institution") {
       if (!institutionToken || institutionToken.trim().length < 4) {
         setTokenError(t("auth.tokenNeeded"));
@@ -75,7 +76,10 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
         setSubmitting(false);
         return;
       }
-      if (!institutionName && instName) setInstitutionName(instName);
+      if (instName) {
+        resolvedInstitutionName = instName;
+        setInstitutionName(instName);
+      }
     } else {
       setSubmitting(true);
     }
@@ -86,7 +90,7 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
         const { error } = await signUp(email, password, {
           name: name || email.split("@")[0],
           user_type: userType,
-          ...(userType === "institution" ? { institution_name: institutionName } : {}),
+          ...(userType === "institution" ? { institution_name: resolvedInstitutionName } : {}),
         });
         if (error) {
           toast({ title: t("auth.signupFailed"), description: error.message, variant: "destructive" });
@@ -104,6 +108,16 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
         if (error) {
           toast({ title: t("auth.loginFailed"), description: error.message, variant: "destructive" });
           return;
+        }
+        // For institution login, update the profile with institution_name from the validated token
+        if (userType === "institution" && resolvedInstitutionName) {
+          const { data: { user: currentUser } } = await supabase.auth.getUser();
+          if (currentUser) {
+            await supabase
+              .from("profiles")
+              .update({ institution_name: resolvedInstitutionName })
+              .eq("user_id", currentUser.id);
+          }
         }
         // Navigate immediately based on selected role after login
         if (userType === "institution") {
