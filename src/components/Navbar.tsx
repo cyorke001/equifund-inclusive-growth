@@ -25,7 +25,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, profile } = useAuth();
   const { language, setLanguage, t } = useLanguage();
 
   const navLinks = [
