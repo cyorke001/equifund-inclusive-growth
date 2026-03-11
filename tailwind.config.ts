@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['Plus Jakarta Sans', 'sans-serif'],
-        body: ['DM Sans', 'sans-serif'],
+        heading: ['Outfit', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -70,6 +70,7 @@ export default {
           "warm-dark": "hsl(var(--equi-warm-dark))",
           gold: "hsl(var(--equi-gold))",
           sky: "hsl(var(--equi-sky))",
+          barrier: "hsl(var(--equi-barrier))",
         },
       },
       borderRadius: {

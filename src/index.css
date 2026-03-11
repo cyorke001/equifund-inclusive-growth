@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,17 +6,17 @@
 
 @layer base {
   :root {
-    --font-heading: 'Plus Jakarta Sans', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
 
     --background: 210 20% 98%;
-    --foreground: 220 30% 12%;
+    --foreground: 220 30% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 30% 12%;
+    --card-foreground: 220 30% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 12%;
+    --popover-foreground: 220 30% 10%;
 
     --primary: 215 65% 22%;
     --primary-foreground: 210 40% 98%;
@@ -25,10 +25,10 @@
     --secondary-foreground: 0 0% 100%;
 
     --muted: 210 15% 94%;
-    --muted-foreground: 215 16% 38%;
+    --muted-foreground: 215 20% 35%;
 
-    --accent: 35 80% 55%;
-    --accent-foreground: 220 30% 12%;
+    --accent: 35 80% 50%;
+    --accent-foreground: 220 30% 10%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
@@ -55,17 +55,22 @@
     --equi-green-light: 150 40% 55%;
     --equi-warm: 35 40% 95%;
     --equi-warm-dark: 30 20% 75%;
-    --equi-gold: 35 80% 55%;
+    --equi-gold: 35 80% 50%;
     --equi-sky: 200 70% 50%;
+    --equi-barrier: 0 60% 45%;
 
     --gradient-hero: linear-gradient(135deg, hsl(215 65% 22%), hsl(215 55% 32%), hsl(200 60% 35%));
     --gradient-green: linear-gradient(135deg, hsl(150 45% 40%), hsl(150 40% 55%));
     --gradient-warm: linear-gradient(135deg, hsl(35 40% 95%), hsl(30 30% 90%));
     --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 20% 98%));
+    --gradient-barrier: linear-gradient(135deg, hsl(0 40% 97%), hsl(15 30% 95%));
 
     --shadow-soft: 0 2px 15px -3px hsl(215 65% 22% / 0.08);
     --shadow-card: 0 4px 25px -5px hsl(215 65% 22% / 0.1);
     --shadow-elevated: 0 10px 40px -10px hsl(215 65% 22% / 0.15);
+
+    /* Accessibility */
+    --font-size-multiplier: 1;
   }
 
   .dark {
@@ -80,8 +85,8 @@
     --secondary: 150 45% 45%;
     --secondary-foreground: 220 30% 8%;
     --muted: 220 20% 18%;
-    --muted-foreground: 215 12% 60%;
-    --accent: 35 80% 55%;
+    --muted-foreground: 215 15% 55%;
+    --accent: 35 80% 50%;
     --accent-foreground: 220 30% 8%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
@@ -89,6 +94,12 @@
     --input: 220 20% 22%;
     --ring: 200 70% 50%;
   }
+
+  /* Font size accessibility classes */
+  .font-size-small { --font-size-multiplier: 0.9; }
+  .font-size-normal { --font-size-multiplier: 1; }
+  .font-size-large { --font-size-multiplier: 1.15; }
+  .font-size-xl { --font-size-multiplier: 1.3; }
 }
 
 @layer base {
@@ -98,9 +109,15 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
+    font-size: calc(1rem * var(--font-size-multiplier, 1));
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
   }
 }
 
@@ -116,6 +133,9 @@
   }
   .bg-warm {
     background: var(--gradient-warm);
+  }
+  .bg-barrier {
+    background: var(--gradient-barrier);
   }
   .shadow-soft {
     box-shadow: var(--shadow-soft);
@@ -137,6 +157,19 @@
   }
 }
 
+/* User-toggled reduced motion */
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* High contrast mode */
+.high-contrast {
+  --muted-foreground: 215 30% 20%;
+  --border: 214 30% 70%;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -150,7 +183,7 @@
 }
 
 :focus-visible {
-  outline: 2px solid hsl(var(--ring));
+  outline: 3px solid hsl(var(--ring));
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -169,3 +202,12 @@
 .skip-to-content:focus {
   top: 0;
 }
+
+/* Chatbot markdown prose */
+.chat-prose p { margin: 0.4em 0; }
+.chat-prose ul, .chat-prose ol { margin: 0.3em 0; padding-left: 1.2em; }
+.chat-prose li { margin: 0.15em 0; }
+.chat-prose strong { font-weight: 600; }
+.chat-prose h1, .chat-prose h2, .chat-prose h3 { font-weight: 600; margin: 0.5em 0 0.2em; font-size: 0.95em; }
+.chat-prose code { background: hsl(var(--muted)); padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.85em; }
+.chat-prose a { color: hsl(var(--primary)); text-decoration: underline; }
