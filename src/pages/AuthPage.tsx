@@ -93,11 +93,23 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
           return;
         }
         toast({ title: t("auth.accountCreated"), description: t("auth.welcome") });
+        // Navigate based on selected role after signup
+        if (userType === "institution") {
+          navigate("/institution-dashboard", { replace: true });
+        } else {
+          navigate("/entrepreneur-dashboard", { replace: true });
+        }
       } else {
         const { error } = await signIn(email, password);
         if (error) {
           toast({ title: t("auth.loginFailed"), description: error.message, variant: "destructive" });
           return;
+        }
+        // Navigate immediately based on selected role after login
+        if (userType === "institution") {
+          navigate("/institution-dashboard", { replace: true });
+        } else {
+          navigate("/entrepreneur-dashboard", { replace: true });
         }
       }
     } finally {
