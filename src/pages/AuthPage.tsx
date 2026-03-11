@@ -159,14 +159,6 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
           </button>
         </div>
 
-        {mode === "login" && userType === "institution" && (
-          <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-3 flex items-start gap-2">
-            <Building2 className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-            <p className="text-xs text-muted-foreground">
-              {t("auth.institutionLoginHint") || "Sign in with your institution email and password. If your account was created with a valid institution token, you'll be directed to the Institution Dashboard automatically."}
-            </p>
-          </div>
-        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {mode === "signup" && (
