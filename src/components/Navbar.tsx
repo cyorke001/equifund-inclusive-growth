@@ -25,7 +25,7 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, profile } = useAuth();
   const { language, setLanguage, t } = useLanguage();
 
   const navLinks = [
@@ -83,7 +83,7 @@ const Navbar = () => {
 
           {isLoggedIn ? (
             <>
-              <Link to="/entrepreneur-dashboard">
+              <Link to={profile?.user_type === "institution" ? "/institution-dashboard" : "/entrepreneur-dashboard"}>
                 <Button variant="ghost" size="sm">{t("nav.dashboard")}</Button>
               </Link>
               <Button size="sm" variant="ghost" onClick={handleLogout}>{t("nav.logout")}</Button>
@@ -136,7 +136,7 @@ const Navbar = () => {
           <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
             {isLoggedIn ? (
               <>
-                <Link to="/entrepreneur-dashboard" onClick={() => setMobileOpen(false)}>
+                <Link to={profile?.user_type === "institution" ? "/institution-dashboard" : "/entrepreneur-dashboard"} onClick={() => setMobileOpen(false)}>
                   <Button variant="ghost" size="sm" className="w-full justify-start">{t("nav.dashboard")}</Button>
                 </Link>
                 <Button variant="ghost" size="sm" className="w-full justify-start" onClick={handleLogout}>{t("nav.logout")}</Button>
