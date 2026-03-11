@@ -16,6 +16,7 @@ import CommunityImpactPage from "@/pages/CommunityImpactPage";
 import ContactPage from "@/pages/ContactPage";
 import AuthPage from "@/pages/AuthPage";
 import EntrepreneurDashboard from "@/pages/EntrepreneurDashboard";
+import InstitutionDashboard from "@/pages/InstitutionDashboard";
 import OnboardingPage from "@/pages/OnboardingPage";
 import NotFound from "@/pages/NotFound";
 
