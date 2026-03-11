@@ -8,6 +8,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ChatBot from "@/components/ChatBot";
+import AccessibilityControls from "@/components/AccessibilityControls";
 import HomePage from "@/pages/HomePage";
 import AboutPage from "@/pages/AboutPage";
 import HowItWorksPage from "@/pages/HowItWorksPage";
@@ -43,6 +44,7 @@ const App = () => (
             </Routes>
             <Footer />
             <ChatBot />
+            <AccessibilityControls />
           </BrowserRouter>
         </AuthProvider>
       </LanguageProvider>
