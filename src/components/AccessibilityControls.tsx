@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings, Type, Eye, Minimize2, X } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 type FontSize = "normal" | "large" | "xl";
 
@@ -9,6 +10,7 @@ const AccessibilityControls = () => {
   const [fontSize, setFontSize] = useState<FontSize>("normal");
   const [reducedMotion, setReducedMotion] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const saved = localStorage.getItem("equifund-a11y");
@@ -34,8 +36,8 @@ const AccessibilityControls = () => {
       <button
         onClick={() => setOpen(!open)}
         className="fixed bottom-6 left-6 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-card hover:shadow-elevated transition-shadow"
-        aria-label="Accessibility settings"
-        title="Accessibility settings"
+        aria-label={t("a11y.title")}
+        title={t("a11y.title")}
       >
         <Settings className="h-5 w-5" />
       </button>
@@ -49,16 +51,15 @@ const AccessibilityControls = () => {
             className="fixed bottom-20 left-6 z-50 w-72 rounded-xl border border-border bg-card p-5 shadow-elevated"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-heading font-semibold text-foreground text-sm">Accessibility</h3>
+              <h3 className="font-heading font-semibold text-foreground text-sm">{t("a11y.title")}</h3>
               <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground" aria-label="Close">
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            {/* Font Size */}
             <div className="mb-4">
               <label className="flex items-center gap-2 text-xs font-semibold text-foreground mb-2">
-                <Type className="h-3.5 w-3.5" /> Text Size
+                <Type className="h-3.5 w-3.5" /> {t("a11y.textSize")}
               </label>
               <div className="flex gap-1.5">
                 {(["normal", "large", "xl"] as FontSize[]).map((size) => (
@@ -78,7 +79,6 @@ const AccessibilityControls = () => {
               </div>
             </div>
 
-            {/* Reduced Motion */}
             <div className="mb-3">
               <button
                 onClick={() => setReducedMotion(!reducedMotion)}
@@ -86,7 +86,7 @@ const AccessibilityControls = () => {
                 aria-pressed={reducedMotion}
               >
                 <span className="flex items-center gap-2">
-                  <Minimize2 className="h-3.5 w-3.5" /> Reduce Motion
+                  <Minimize2 className="h-3.5 w-3.5" /> {t("a11y.reduceMotion")}
                 </span>
                 <span className={`flex h-5 w-9 items-center rounded-full px-0.5 transition-colors ${reducedMotion ? "bg-primary" : "bg-border"}`}>
                   <span className={`h-4 w-4 rounded-full bg-card shadow transition-transform ${reducedMotion ? "translate-x-4" : "translate-x-0"}`} />
@@ -94,7 +94,6 @@ const AccessibilityControls = () => {
               </button>
             </div>
 
-            {/* High Contrast */}
             <div>
               <button
                 onClick={() => setHighContrast(!highContrast)}
@@ -102,7 +101,7 @@ const AccessibilityControls = () => {
                 aria-pressed={highContrast}
               >
                 <span className="flex items-center gap-2">
-                  <Eye className="h-3.5 w-3.5" /> High Contrast
+                  <Eye className="h-3.5 w-3.5" /> {t("a11y.highContrast")}
                 </span>
                 <span className={`flex h-5 w-9 items-center rounded-full px-0.5 transition-colors ${highContrast ? "bg-primary" : "bg-border"}`}>
                   <span className={`h-4 w-4 rounded-full bg-card shadow transition-transform ${highContrast ? "translate-x-4" : "translate-x-0"}`} />

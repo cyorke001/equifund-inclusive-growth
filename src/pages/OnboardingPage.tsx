@@ -12,18 +12,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { useOnboarding, dataKeys } from "@/hooks/useOnboarding";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const steps = [
-  { id: 0, icon: Building2, title: "Business Name", subtitle: "What's your business called?", tip: "This helps lenders identify your company quickly." },
-  { id: 1, icon: Briefcase, title: "Industry", subtitle: "What industry are you in?", tip: "Lenders evaluate risk and opportunity by industry." },
-  { id: 2, icon: MapPin, title: "Location", subtitle: "Where is your business based?", tip: "Location context helps assess local market potential." },
-  { id: 3, icon: Calendar, title: "Years in Operation", subtitle: "How long have you been running?", tip: "Business maturity is a key factor in funding decisions." },
-  { id: 4, icon: Users, title: "Team Size", subtitle: "How many people are on your team?", tip: "Team strength signals growth capacity to lenders." },
-  { id: 5, icon: DollarSign, title: "Current Revenue", subtitle: "What's your current annual revenue?", tip: "Revenue data helps match you with the right funding type." },
-  { id: 6, icon: TrendingUp, title: "Funding Needed", subtitle: "How much funding are you seeking?", tip: "This helps us recommend the best funding paths." },
-  { id: 7, icon: Target, title: "Market Demand", subtitle: "Describe the demand for your product or service.", tip: "Strong market demand boosts your readiness score." },
-  { id: 8, icon: FileText, title: "Business Description", subtitle: "Tell us about your business in a few sentences.", tip: "This becomes part of your lender-ready summary." },
+const stepKeys = [
+  "businessName", "industry", "location", "years", "team", "revenue", "funding", "market", "description",
 ];
+
+const stepIcons = [Building2, Briefcase, MapPin, Calendar, Users, DollarSign, TrendingUp, Target, FileText];
 
 const industries = [
   "Technology", "Food & Beverage", "Retail", "Healthcare", "Construction",
@@ -50,6 +45,7 @@ const celebrations = [
 const OnboardingPage = () => {
   const { currentStep, data, getValue, setFieldValue, setStep, markCompleted, loading } = useOnboarding();
   const { isLoggedIn, isLoading: authLoading } = useAuth();
+  const { t } = useLanguage();
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationText, setCelebrationText] = useState("");
   const navigate = useNavigate();
@@ -67,8 +63,10 @@ const OnboardingPage = () => {
     return null;
   }
 
-  const progress = Math.round(((currentStep + 1) / steps.length) * 100);
-  const step = steps[currentStep];
+  const totalSteps = stepKeys.length;
+  const progress = Math.round(((currentStep + 1) / totalSteps) * 100);
+  const StepIcon = stepIcons[currentStep];
+  const stepKey = stepKeys[currentStep];
   const canProceed = getValue().trim().length > 0;
 
   const goNext = () => {
@@ -77,7 +75,7 @@ const OnboardingPage = () => {
     setShowCelebration(true);
     setTimeout(() => {
       setShowCelebration(false);
-      if (currentStep < steps.length - 1) {
+      if (currentStep < totalSteps - 1) {
         setStep(currentStep + 1);
       } else {
         markCompleted();
@@ -141,11 +139,11 @@ const OnboardingPage = () => {
           </div>
         );
       case 7:
-        return <Textarea value={val} onChange={(e) => setVal(e.target.value)} placeholder="e.g., Growing demand for organic food delivery..." rows={4} maxLength={500} className="text-base" />;
+        return <Textarea value={val} onChange={(e) => setVal(e.target.value)} placeholder={t("onboard.marketPlaceholder")} rows={4} maxLength={500} className="text-base" />;
       case 8:
-        return <Textarea value={val} onChange={(e) => setVal(e.target.value)} placeholder="Tell us what your business does..." rows={5} maxLength={1000} className="text-base" />;
+        return <Textarea value={val} onChange={(e) => setVal(e.target.value)} placeholder={t("onboard.descriptionPlaceholder")} rows={5} maxLength={1000} className="text-base" />;
       default:
-        return <Input value={val} onChange={(e) => setVal(e.target.value)} placeholder={currentStep === 0 ? "e.g., Maple Leaf Catering" : "e.g., Toronto, Ontario"} maxLength={200} className="text-base h-12" onKeyDown={(e) => e.key === "Enter" && goNext()} />;
+        return <Input value={val} onChange={(e) => setVal(e.target.value)} placeholder={currentStep === 0 ? t("onboard.businessNamePlaceholder") : t("onboard.locationPlaceholder")} maxLength={200} className="text-base h-12" onKeyDown={(e) => e.key === "Enter" && goNext()} />;
     }
   };
 
@@ -154,7 +152,7 @@ const OnboardingPage = () => {
       <div className="border-b border-border bg-card px-4 py-3">
         <div className="container mx-auto max-w-2xl">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-foreground font-heading">Step {currentStep + 1} of {steps.length}</span>
+            <span className="text-sm font-medium text-foreground font-heading">{t("onboard.step")} {currentStep + 1} {t("onboard.of")} {totalSteps}</span>
             <span className="text-sm font-bold text-secondary">{progress}%</span>
           </div>
           <Progress value={progress} className="h-2" />
@@ -173,29 +171,29 @@ const OnboardingPage = () => {
               <motion.div key={currentStep} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -40 }} transition={{ duration: 0.3 }}>
                 <div className="mb-8 text-center">
                   <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10">
-                    <step.icon className="h-7 w-7 text-secondary" />
+                    <StepIcon className="h-7 w-7 text-secondary" />
                   </div>
-                  <h1 className="text-2xl font-bold font-heading text-foreground md:text-3xl">{step.subtitle}</h1>
+                  <h1 className="text-2xl font-bold font-heading text-foreground md:text-3xl">{t(`onboard.${stepKey}Sub`)}</h1>
                 </div>
                 <div className="mb-6">{renderInput()}</div>
                 <div className="mb-8 flex items-start gap-3 rounded-xl bg-muted/50 border border-border p-4">
                   <Lightbulb className="h-5 w-5 shrink-0 text-accent mt-0.5" />
                   <div>
-                    <p className="text-xs font-semibold text-foreground uppercase tracking-wider mb-1">Why this matters</p>
-                    <p className="text-sm text-muted-foreground">{step.tip}</p>
+                    <p className="text-xs font-semibold text-foreground uppercase tracking-wider mb-1">{t("onboard.whyMatters")}</p>
+                    <p className="text-sm text-muted-foreground">{t(`onboard.${stepKey}Tip`)}</p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <Button variant="ghost" onClick={goBack} disabled={currentStep === 0} className="gap-2">
-                    <ArrowLeft className="h-4 w-4" /> Back
+                    <ArrowLeft className="h-4 w-4" /> {t("onboard.back")}
                   </Button>
                   <div className="flex items-center gap-1">
-                    {steps.map((_, i) => (
+                    {stepKeys.map((_, i) => (
                       <div key={i} className={`h-2 rounded-full transition-all ${i === currentStep ? "w-6 bg-secondary" : i < currentStep ? "w-2 bg-secondary/40" : "w-2 bg-border"}`} />
                     ))}
                   </div>
                   <Button onClick={goNext} disabled={!canProceed} className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2">
-                    {currentStep === steps.length - 1 ? (<>Finish <Sparkles className="h-4 w-4" /></>) : (<>Next <ArrowRight className="h-4 w-4" /></>)}
+                    {currentStep === totalSteps - 1 ? (<>{t("onboard.finish")} <Sparkles className="h-4 w-4" /></>) : (<>{t("onboard.next")} <ArrowRight className="h-4 w-4" /></>)}
                   </Button>
                 </div>
               </motion.div>
@@ -208,7 +206,7 @@ const OnboardingPage = () => {
         <div className="border-t border-border bg-card px-4 py-3">
           <div className="container mx-auto max-w-2xl">
             <div className="flex flex-wrap gap-2">
-              {steps.slice(0, currentStep).map((s, i) => {
+              {stepKeys.slice(0, currentStep).map((_, i) => {
                 const val = data[dataKeys[i]];
                 return (
                   <button key={i} onClick={() => setStep(i)}

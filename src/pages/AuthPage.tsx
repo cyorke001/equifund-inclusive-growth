@@ -29,7 +29,7 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
   const [tokenError, setTokenError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { signIn, signUp, isLoggedIn, isLoading } = useAuth();
+  const { signIn, signUp, isLoggedIn, isLoading, profile } = useAuth();
   const { toast } = useToast();
   const { t } = useLanguage();
 
@@ -41,9 +41,13 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
 
   useEffect(() => {
     if (!isLoading && isLoggedIn) {
-      navigate("/entrepreneur-dashboard", { replace: true });
+      if (profile?.user_type === "institution") {
+        navigate("/institution-dashboard", { replace: true });
+      } else {
+        navigate("/entrepreneur-dashboard", { replace: true });
+      }
     }
-  }, [isLoggedIn, isLoading, navigate]);
+  }, [isLoggedIn, isLoading, navigate, profile]);
 
   const validateToken = async (token: string): Promise<{ valid: boolean; instName?: string }> => {
     const { data, error } = await supabase
@@ -71,10 +75,7 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
         setSubmitting(false);
         return;
       }
-      // Auto-fill institution name if not manually set
-      if (!institutionName && instName) {
-        setInstitutionName(instName);
-      }
+      if (!institutionName && instName) setInstitutionName(instName);
     } else {
       setSubmitting(true);
     }
@@ -99,7 +100,6 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
           return;
         }
       }
-      navigate("/entrepreneur-dashboard");
     } finally {
       setSubmitting(false);
     }
@@ -165,26 +165,26 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
           {mode === "signup" && (
             <div>
               <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-foreground">{t("auth.fullName")}</label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required maxLength={100} placeholder="Enter your name" />
+              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required maxLength={100} placeholder={t("auth.namePlaceholder")} />
             </div>
           )}
 
           {mode === "signup" && userType === "institution" && (
             <div>
               <label htmlFor="institutionName" className="mb-1.5 block text-sm font-medium text-foreground">{t("auth.institutionName")}</label>
-              <Input id="institutionName" value={institutionName} onChange={(e) => setInstitutionName(e.target.value)} required maxLength={200} placeholder="Bank, credit union, or organization name" />
+              <Input id="institutionName" value={institutionName} onChange={(e) => setInstitutionName(e.target.value)} required maxLength={200} placeholder={t("auth.institutionPlaceholder")} />
             </div>
           )}
 
           <div>
             <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">{t("auth.email")}</label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required maxLength={255} placeholder="you@example.com" />
+            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required maxLength={255} placeholder={t("auth.emailPlaceholder")} />
           </div>
 
           <div>
             <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-foreground">{t("auth.password")}</label>
             <div className="relative">
-              <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} placeholder="Min. 8 characters" className="pr-10" />
+              <Input id="password" type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} placeholder={t("auth.passwordPlaceholder")} className="pr-10" />
               <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" aria-label={showPassword ? "Hide password" : "Show password"}>
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -196,7 +196,7 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
               <label htmlFor="token" className="mb-1.5 flex items-center gap-2 text-sm font-medium text-foreground">
                 <KeyRound className="h-4 w-4 text-primary" /> {t("auth.institutionToken")}
               </label>
-              <Input id="token" value={institutionToken} onChange={(e) => { setInstitutionToken(e.target.value); setTokenError(""); }} required placeholder="e.g. EQUI-TD-2026" className={tokenError ? "border-destructive" : ""} />
+              <Input id="token" value={institutionToken} onChange={(e) => { setInstitutionToken(e.target.value); setTokenError(""); }} required placeholder={t("auth.tokenPlaceholder")} className={tokenError ? "border-destructive" : ""} />
               {tokenError && (
                 <p className="mt-1.5 flex items-start gap-1.5 text-xs text-destructive">
                   <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" /> {tokenError}
@@ -205,11 +205,11 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
               <div className="mt-2">
                 <button type="button" onClick={() => setShowDemoTokens(!showDemoTokens)}
                   className="flex items-center gap-1.5 text-xs font-medium text-primary hover:underline">
-                  <Info className="h-3.5 w-3.5" /> {showDemoTokens ? "Hide demo tokens" : "View demo tokens for testing"}
+                  <Info className="h-3.5 w-3.5" /> {showDemoTokens ? t("auth.hideDemoTokens") : t("auth.viewDemoTokens")}
                 </button>
                 {showDemoTokens && (
                   <div className="mt-2 rounded-lg border border-border bg-muted p-3 space-y-1.5">
-                    <p className="text-xs font-semibold text-foreground mb-2">Demo Institution Tokens:</p>
+                    <p className="text-xs font-semibold text-foreground mb-2">{t("auth.demoTokensTitle")}</p>
                     {demoTokens.map((dt) => (
                       <button key={dt.token} type="button"
                         onClick={() => { setInstitutionToken(dt.token); setInstitutionName(dt.institution); setTokenError(""); }}
