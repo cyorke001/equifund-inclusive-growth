@@ -90,7 +90,7 @@ const AuthPage = ({ defaultMode = "login" }: { defaultMode?: AuthMode }) => {
         const { error } = await signUp(email, password, {
           name: name || email.split("@")[0],
           user_type: userType,
-          ...(userType === "institution" ? { institution_name: institutionName } : {}),
+          ...(userType === "institution" ? { institution_name: resolvedInstitutionName } : {}),
         });
         if (error) {
           toast({ title: t("auth.signupFailed"), description: error.message, variant: "destructive" });
